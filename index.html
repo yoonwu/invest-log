@@ -9,38 +9,25 @@ layout: default
 </section>
 
 <section class="feed">
-  <h2>일지</h2>
+  <h2>계좌일지</h2>
   <div id="feed"></div>
   <button class="more-btn" id="more" style="display:none">지난 일지 더 보기</button>
-</section>
-
-<section class="feed">
-  <h2>일기</h2>
-  {% for post in site.posts %}{% unless post.categories contains "칼럼" %}
-  <article class="post" style="margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
-      <h1 style="font-size:18px;margin:0 0 2px">{{ post.title }}</h1>
-      <a href="{{ post.url | relative_url }}" style="flex:none;font-size:12px;color:#8a919c;text-decoration:none">링크 ↗</a>
-    </div>
-    <div class="post-date">{{ post.date | date: "%Y년 %-m월 %-d일" }}</div>
-    <div class="post-body">{{ post.content }}</div>
-  </article>
+  {% for post in site.posts %}{% unless post.categories contains "생각" or post.categories contains "월결산" %}
+    {% include post-card.html post=post %}
   {% endunless %}{% endfor %}
 </section>
 
-{% assign cols = site.categories["칼럼"] %}{% if cols %}
+{% assign thoughts = site.categories["생각"] %}{% if thoughts %}
 <section class="feed">
-  <h2>칼럼</h2>
-  {% for post in cols %}
-  <article class="post" style="margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
-      <h1 style="font-size:18px;margin:0 0 2px">{{ post.title }}</h1>
-      <a href="{{ post.url | relative_url }}" style="flex:none;font-size:12px;color:#8a919c;text-decoration:none">링크 ↗</a>
-    </div>
-    <div class="post-date">{{ post.date | date: "%Y년 %-m월 %-d일" }}</div>
-    <div class="post-body">{{ post.content }}</div>
-  </article>
-  {% endfor %}
+  <h2>생각</h2>
+  {% for post in thoughts %}{% include post-card.html post=post %}{% endfor %}
+</section>
+{% endif %}
+
+{% assign settlements = site.categories["월결산"] %}{% if settlements %}
+<section class="feed">
+  <h2>월결산</h2>
+  {% for post in settlements %}{% include post-card.html post=post %}{% endfor %}
 </section>
 {% endif %}
 
@@ -97,7 +84,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   /* 일지 1건 → 복붙용 플레인 텍스트 (네이버/티스토리) */
   function copyText(e) {
     const md = e.market, L = [];
-    L.push(`📒 투자일지 ${e.date.replaceAll("-", ".")} (${dow(e.date)}) D+${dplus(e.date)}`);
+    L.push(`📒 계좌일지 ${e.date.replaceAll("-", ".")} (${dow(e.date)}) D+${dplus(e.date)}`);
     L.push("");
     L.push(`[계좌] 총 ${won(e.totalKrw)} (전일 ${signWon(e.dayChg)}, ${sign(e.dayChgPct)})`);
     e.accounts.forEach(a => L.push(` · ${a.name} ${won(a.totalKrw)} (${sign(a.plPct)})`));

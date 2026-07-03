@@ -33,6 +33,8 @@ const trades = month.flatMap(e => (e.trades || []).map(t =>
 
 const md = `## ${ym} 결산 초안 (자동 생성 — 이 표를 바탕으로 글을 쓰세요)
 
+> _posts/ 에 글로 옮길 때 프런트매터에 \`category: 월결산\`을 넣으면 홈의 월결산 섹션에 모입니다.
+
 | 항목 | 값 |
 |---|---|
 | 기간 | ${first.date} ~ ${last.date} (${month.length}일 기록) |
