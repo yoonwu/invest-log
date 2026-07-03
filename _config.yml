@@ -4,6 +4,11 @@ lang: ko
 timezone: Asia/Seoul
 url: "https://yoonwu.github.io"
 baseurl: "/invest-log"
+collections:
+  memos:
+    output: false
 exclude:
   - scripts/
+  - drafts/
+  - node_modules/
   - README.md

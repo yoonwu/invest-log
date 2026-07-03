@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 /* ============================================================================
-   invest-log 평가액 계산 스크립트
+   invest-log 평가액 계산 + 일일 스냅샷 축적
    ----------------------------------------------------------------------------
-   positions.json 을 읽어 종목별 시세·환율을 조회하고 계좌별/전체 평가액(원화)을
-   data/valuation.json 에 기록한다. (매입원가/손익률은 범위 아님 — 평가금액만)
+   positions.json 을 읽어 종목별 시세·환율을 조회하고
+   - data/valuation.json : 계좌 상세 (계좌 페이지용, 매일 덮어씀)
+   - data/history.json   : 하루 1건 일지 엔트리 축적 (홈 피드·그래프용)
 
    시세 소스 (s-backtesting 의 yogibag-data-proxy.worker.js 로직 재사용):
-   - 미국 티커      : Yahoo chart API(1순위) → stooq CSV(폴백)
-   - 환율 USD/KRW   : 동일 Yahoo 로직, 심볼 KRW=X (stooq 폴백: usdkrw)
-   - 국내 티커(KRX) : 네이버 siseJson.naver 일봉
-   - USD_CASH       : qty = 달러 금액, 환율만 곱함
-   일 1회 스냅샷 전제 — 각 소스의 최근 일봉 종가를 쓴다 (장중 실시간 아님).
+   - 미국 티커·지수·벤치마크 : Yahoo chart API(1순위) → stooq CSV(폴백)
+   - 환율 USD/KRW            : 동일 Yahoo 로직, 심볼 KRW=X
+   - 국내 티커(KRX)          : 네이버 siseJson.naver 일봉
+   - 공포탐욕지수            : CNN 비공식 API (실패해도 무시)
+   일 1회 스냅샷 전제 — 각 소스의 최근 일봉 종가를 쓴다.
    ========================================================================== */
 
 import fs from "node:fs";
@@ -19,6 +20,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const UA = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" };
+const START_DATE = "2026-07-03"; // 기록 시작일 (D+N 기준)
 
 /* ---- Yahoo Finance chart API (워커 fromYahoo 축약: 일봉 종가만) ---- */
 async function fromYahoo(symbol, from, to) {
@@ -73,7 +75,6 @@ async function fromNaver(code, from, to) {
   const r = await fetch(u, { headers: UA });
   if (!r.ok) throw new Error("HTTP " + r.status);
   const t = await r.text();
-  // 응답이 작은따옴표 JS 배열 형태 → JSON 정규화, 실패 시 행 단위 정규식 폴백
   const out = [];
   let rows = null;
   try { rows = JSON.parse(t.replace(/'/g, '"').trim()); } catch { /* 폴백 사용 */ }
@@ -91,49 +92,70 @@ async function fromNaver(code, from, to) {
   return out;
 }
 
-/* ---- 소스 순서대로 시도해 최근 종가 반환 (워커의 소스 폴백 방식) ---- */
-async function latestClose(fetchers, label) {
+/* ---- 소스 순서대로 시도, 최근 종가 + 전일 대비 반환 ---- */
+async function latest(fetchers, label) {
   const errors = [];
   for (const [source, fn] of fetchers) {
     try {
       const rows = await fn();
-      const last = rows[rows.length - 1];
-      return { price: last.close, date: last.date, source };
+      const last = rows[rows.length - 1], prev = rows[rows.length - 2];
+      return { price: last.close, date: last.date, source,
+               chgPct: prev ? +(100 * (last.close / prev.close - 1)).toFixed(2) : null };
     } catch (e) { errors.push(`${source}: ${e.message}`); }
   }
   throw new Error(`${label} 시세 조회 실패 — ${errors.join(" / ")}`);
 }
 
+const usQuote = t => latest([
+  ["yahoo", () => fromYahoo(t, from, to)],
+  ["stooq", () => fromStooq(t.toLowerCase().replace(/^\^/, "") + ".us", from, to)],
+], t);
+const yahooOnly = s => latest([["yahoo", () => fromYahoo(s, from, to)]], s);
+
+/* ---- CNN 공포탐욕지수 (실패해도 null) ---- */
+async function fearGreed() {
+  try {
+    const r = await fetch("https://production.dataviz.cnn.io/index/fearandgreed/graphdata",
+                          { headers: UA });
+    if (!r.ok) return null;
+    const j = await r.json();
+    const g = j?.fear_and_greed;
+    if (!g || !Number.isFinite(+g.score)) return null;
+    return { score: Math.round(+g.score), rating: String(g.rating || "") };
+  } catch { return null; }
+}
+
 /* ---- 메인 ---- */
 const positions = JSON.parse(fs.readFileSync(path.join(ROOT, "positions.json"), "utf8"));
+const kstNow = new Date(Date.now() + 9 * 3600 * 1000);
+const today = kstNow.toISOString().slice(0, 10); // KST 기준 날짜
 const to = new Date().toISOString().slice(0, 10);
-const from = new Date(Date.now() - 14 * 86400 * 1000).toISOString().slice(0, 10);
+const from = new Date(Date.now() - 21 * 86400 * 1000).toISOString().slice(0, 10);
 
-const fx = await latestClose([
+const fx = await latest([
   ["yahoo", () => fromYahoo("KRW=X", from, to)],
   ["stooq", () => fromStooq("usdkrw", from, to)],
 ], "USD/KRW");
 
 const accounts = [];
+const holdingsChg = {};
+const qtyMap = {};
 for (const acc of positions.accounts) {
   const holdings = [];
   for (const h of acc.holdings) {
     let quote, currency;
     if (h.market === "US") {
-      quote = await latestClose([
-        ["yahoo", () => fromYahoo(h.ticker, from, to)],
-        ["stooq", () => fromStooq(h.ticker.toLowerCase() + ".us", from, to)],
-      ], h.ticker);
-      currency = "USD";
+      quote = await usQuote(h.ticker); currency = "USD";
     } else if (h.market === "KRX") {
-      quote = await latestClose([["naver", () => fromNaver(h.ticker, from, to)]], h.ticker);
+      quote = await latest([["naver", () => fromNaver(h.ticker, from, to)]], h.ticker);
       currency = "KRW";
     } else if (h.market === "CASH") {
-      quote = { price: 1, date: fx.date, source: "fixed" };
-      currency = "USD";
+      quote = { price: 1, date: fx.date, source: "fixed", chgPct: 0 }; currency = "USD";
     } else {
       throw new Error(`알 수 없는 market: ${h.market} (${h.ticker})`);
     }
+    if (h.market !== "CASH") holdingsChg[h.ticker] = quote.chgPct;
+    qtyMap[h.ticker] = h.qty;
     const toKrw = currency === "USD" ? fx.price : 1;
     const valueKrw = Math.round(h.qty * quote.price * toKrw);
     // 손익은 증권사 표기 방식과 동일: 매입금액도 현재 환율로 환산 (환차손익 미포함)
@@ -152,18 +174,74 @@ for (const acc of positions.accounts) {
                   plKrw: totalKrw - costKrw, plPct: +(100 * (totalKrw / costKrw - 1)).toFixed(2) });
 }
 
+/* 지수·벤치마크 */
+const [nasdaq, sp500, sox, tnx, qqq, qld] = await Promise.all([
+  yahooOnly("^IXIC"), yahooOnly("^GSPC"), yahooOnly("^SOX"),
+  yahooOnly("^TNX"), usQuote("QQQ"), usQuote("QLD"),
+]);
+const us10y = tnx.price > 20 ? +(tnx.price / 10).toFixed(2) : +tnx.price.toFixed(2);
+const fg = await fearGreed();
+
 const totalKrw = accounts.reduce((s, a) => s + a.totalKrw, 0);
 const totalCostKrw = accounts.reduce((s, a) => s + a.costKrw, 0);
-const result = {
+
+/* valuation.json — 계좌 상세 페이지용 */
+const valuation = {
   generatedAt: new Date().toISOString(),
   usdkrw: { price: fx.price, date: fx.date, source: fx.source },
   accounts,
-  totalKrw,
-  costKrw: totalCostKrw,
+  totalKrw, costKrw: totalCostKrw,
   plKrw: totalKrw - totalCostKrw,
   plPct: +(100 * (totalKrw / totalCostKrw - 1)).toFixed(2),
 };
 
+/* history.json — 하루 1건, 같은 날짜 재실행 시 교체 (브리핑은 보존) */
+const histPath = path.join(ROOT, "data", "history.json");
+let history = [];
+try { history = JSON.parse(fs.readFileSync(histPath, "utf8")); } catch { /* 첫 실행 */ }
+const prevEntry = [...history].reverse().find(e => e.date < today);
+const oldToday = history.find(e => e.date === today);
+
+/* 매매 감지: 직전 영업일 엔트리의 수량과 비교 */
+const trades = [];
+if (prevEntry?.qty) {
+  const names = {};
+  for (const a of positions.accounts) for (const h of a.holdings) names[h.ticker] = h.name || h.ticker;
+  for (const [t, q] of Object.entries(qtyMap)) {
+    const pq = prevEntry.qty[t];
+    if (pq != null && pq !== q) trades.push({ ticker: t, name: names[t], delta: q - pq });
+    if (pq == null) trades.push({ ticker: t, name: names[t], delta: q, new: true });
+  }
+}
+
+const entry = {
+  date: today,
+  generatedAt: valuation.generatedAt,
+  totalKrw, costKrw: totalCostKrw,
+  plKrw: valuation.plKrw, plPct: valuation.plPct,
+  usdkrw: { price: +fx.price.toFixed(2), chgPct: fx.chgPct },
+  accounts: accounts.map(a => ({ name: a.name, totalKrw: a.totalKrw, plKrw: a.plKrw, plPct: a.plPct })),
+  qty: qtyMap,
+  trades,
+  holdingsChg,
+  market: {
+    nasdaq: { close: nasdaq.price, chgPct: nasdaq.chgPct },
+    sp500: { close: sp500.price, chgPct: sp500.chgPct },
+    sox: { close: sox.price, chgPct: sox.chgPct },
+    us10y,
+    qqq: { close: qqq.price, chgPct: qqq.chgPct },
+    qld: { close: qld.price, chgPct: qld.chgPct },
+    fearGreed: fg,
+  },
+  briefing: oldToday?.briefing ?? null,
+};
+
+history = history.filter(e => e.date !== today);
+history.push(entry);
+history.sort((a, b) => (a.date < b.date ? -1 : 1));
+
 fs.mkdirSync(path.join(ROOT, "data"), { recursive: true });
-fs.writeFileSync(path.join(ROOT, "data", "valuation.json"), JSON.stringify(result, null, 2) + "\n");
-console.log(JSON.stringify(result, null, 2));
+fs.writeFileSync(path.join(ROOT, "data", "valuation.json"), JSON.stringify(valuation, null, 2) + "\n");
+fs.writeFileSync(histPath, JSON.stringify(history) + "\n");
+console.log(`[fetch-valuation] ${today} 총 ${totalKrw.toLocaleString()}원, history ${history.length}건`);
+console.log(JSON.stringify(entry, null, 2));

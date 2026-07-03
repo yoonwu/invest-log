@@ -1,4 +1,4 @@
-# 매일 07:00 KST(22:00 UTC)에 평가액 스냅샷을 계산해 data/valuation.json 으로 커밋
+# 매일 07:00 KST(22:00 UTC): 평가액 스냅샷 → Sonnet 브리핑 → (매월 1일) 결산 초안 → 커밋
 name: valuation
 
 on:
@@ -15,9 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: node scripts/fetch-valuation.mjs
+      - name: Sonnet 브리핑 (키 없으면 생략)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install @anthropic-ai/sdk --no-audit --no-fund --no-save --loglevel=error
+          node scripts/briefing.mjs
+        continue-on-error: true
+      - run: node scripts/monthly-draft.mjs
       - name: 스냅샷 커밋
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/valuation.json
-          git diff --cached --quiet || { git commit -m "chore: 평가액 스냅샷 $(TZ=Asia/Seoul date +%F)"; git push; }
+          git add data/ drafts/
+          git diff --cached --quiet || { git commit -m "chore: 일지 스냅샷 $(TZ=Asia/Seoul date +%F)"; git push; }

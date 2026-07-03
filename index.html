@@ -1,8 +1,7 @@
 ---
 layout: default
 ---
-<h1>계좌별 종합잔고</h1>
-{% include widget.html %}
+<div id="app">불러오는 중…</div>
 
 <section class="posts">
   <h2>일기</h2>
@@ -13,3 +12,216 @@ layout: default
     {% endfor %}
   </ul>
 </section>
+
+<script>
+window.MEMOS = { {% for m in site.memos %}"{{ m.slug }}": {{ m.content | strip | jsonify }},{% endfor %} };
+window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
+</script>
+<script>
+(async function () {
+  const app = document.getElementById("app");
+  const START = "2026-07-03";
+  const C = { me: "#2a78d6", qqq: "#1baf7a", qld: "#eda100" };
+  const comma = n => Math.round(n).toLocaleString("ko-KR");
+  const won = n => comma(n) + "원";
+  const eok = n => n >= 1e8 ? (n / 1e8).toFixed(2) + "억" : comma(n / 1e4) + "만";
+  const sign = n => (n > 0 ? "+" : "") + n.toFixed(2) + "%";
+  const signWon = n => (n > 0 ? "▲ " : n < 0 ? "▼ " : "") + comma(Math.abs(n)) + "원";
+  const cls = n => n > 0 ? "up" : n < 0 ? "down" : "flat";
+  const fgKo = r => ({ "extreme fear": "극단적 공포", fear: "공포", neutral: "중립",
+                       greed: "탐욕", "extreme greed": "극단적 탐욕" })[r] || r;
+  const dow = d => "일월화수목금토"[new Date(d + "T00:00:00").getDay()];
+  const dplus = d => Math.round((Date.parse(d) - Date.parse(START)) / 86400000) + 1;
+
+  let hist;
+  try {
+    const r = await fetch("{{ '/data/history.json' | relative_url }}", { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    hist = await r.json();
+  } catch (e) { app.textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; return; }
+  if (!hist.length) { app.textContent = "데이터 없음"; return; }
+
+  /* 파생값: 전일비 · 전고점/MDD · 벤치마크(같은 돈을 QQQ/QLD에 넣었다면, 원화 기준) */
+  const h0 = hist[0], base = h0.totalKrw;
+  const bq0 = h0.market.qqq.close * h0.usdkrw.price, bl0 = h0.market.qld.close * h0.usdkrw.price;
+  let peak = -Infinity, peakDate = h0.date;
+  hist.forEach((e, i) => {
+    e.prev = hist[i - 1] || null;
+    e.dayChg = e.prev ? e.totalKrw - e.prev.totalKrw : 0;
+    e.dayChgPct = e.prev ? 100 * (e.totalKrw / e.prev.totalKrw - 1) : 0;
+    e.sinceStart = 100 * (e.totalKrw / base - 1);
+    if (e.totalKrw >= peak) { peak = e.totalKrw; peakDate = e.date; }
+    e.dd = 100 * (e.totalKrw / peak - 1);
+    e.underwater = Math.round((Date.parse(e.date) - Date.parse(peakDate)) / 86400000);
+    e.bqqq = 100 * (e.market.qqq.close * e.usdkrw.price / bq0 - 1);
+    e.bqld = 100 * (e.market.qld.close * e.usdkrw.price / bl0 - 1);
+  });
+  const last = hist[hist.length - 1];
+
+  /* 일지 1건 → 복붙용 플레인 텍스트 (네이버/티스토리) */
+  function copyText(e) {
+    const md = e.market, L = [];
+    L.push(`📒 투자일지 ${e.date.replaceAll("-", ".")} (${dow(e.date)}) D+${dplus(e.date)}`);
+    L.push("");
+    L.push(`[계좌] 총 ${won(e.totalKrw)} (전일 ${signWon(e.dayChg)}, ${sign(e.dayChgPct)})`);
+    e.accounts.forEach(a => L.push(` · ${a.name} ${won(a.totalKrw)} (${sign(a.plPct)})`));
+    L.push(`시작일 대비 ${sign(e.sinceStart)} · 전고점 대비 ${e.dd.toFixed(2)}%`);
+    L.push("");
+    L.push(`[시장] 나스닥 ${sign(md.nasdaq.chgPct)} · S&P500 ${sign(md.sp500.chgPct)} · 반도체 ${sign(md.sox.chgPct)} · 미10년물 ${md.us10y}%`);
+    const hc = Object.entries(e.holdingsChg).map(([t, v]) => `${t} ${sign(v)}`).join(" · ");
+    L.push(`${hc} · 환율 ${comma(e.usdkrw.price)}원(${sign(e.usdkrw.chgPct)})`);
+    if (md.fearGreed) L.push(`공포탐욕지수 ${md.fearGreed.score} (${fgKo(md.fearGreed.rating)})`);
+    L.push(`같은 돈이면: QQQ ${sign(e.bqqq)} · QLD ${sign(e.bqld)} · 나 ${sign(e.sinceStart)}`);
+    if (e.briefing) { L.push(""); L.push(`[브리핑] ${e.briefing.text}`); }
+    if (e.trades?.length) {
+      L.push(""); L.push("[매매] " + e.trades.map(t =>
+        `${t.name || t.ticker} ${t.delta > 0 ? "+" : ""}${t.delta}주`).join(", "));
+    }
+    const memo = window.MEMOS[e.date];
+    if (memo) { L.push(""); L.push(`[메모] ${memo}`); }
+    L.push("");
+    L.push(`매일 아침 7시 자동 기록 · 원본(조작 불가 커밋 이력 포함): ${window.SITE_URL}`);
+    return L.join("\n");
+  }
+
+  function entryHtml(e, i) {
+    const md = e.market;
+    const hc = Object.entries(e.holdingsChg).map(([t, v]) =>
+      `${t} <span class="${cls(v)}">${sign(v)}</span>`).join(" · ");
+    const memo = window.MEMOS[e.date];
+    return `<article class="entry">
+      <div class="entry-head">
+        <div class="entry-date">${e.date.slice(5).replace("-", ".")} (${dow(e.date)})
+          <span class="dplus">D+${dplus(e.date)}</span></div>
+        <button class="copy-btn" data-i="${i}">복사</button>
+      </div>
+      <div class="row2"><div class="tag">계좌</div><div class="body">
+        <b>총 ${won(e.totalKrw)}</b> <span class="${cls(e.dayChg)}">${signWon(e.dayChg)} (${sign(e.dayChgPct)})</span><br>
+        <span class="sub">${e.accounts.map(a => `${a.name} ${eok(a.totalKrw)}`).join(" · ")}
+        · 시작 대비 <span class="${cls(e.sinceStart)}">${sign(e.sinceStart)}</span></span>
+      </div></div>
+      <div class="row2"><div class="tag">시장</div><div class="body">
+        나스닥 <span class="${cls(md.nasdaq.chgPct)}">${sign(md.nasdaq.chgPct)}</span> ·
+        S&amp;P500 <span class="${cls(md.sp500.chgPct)}">${sign(md.sp500.chgPct)}</span> ·
+        반도체 <span class="${cls(md.sox.chgPct)}">${sign(md.sox.chgPct)}</span> ·
+        미10년물 ${md.us10y}%<br>
+        <span class="sub">${hc} · 환율 ${comma(e.usdkrw.price)}원(${sign(e.usdkrw.chgPct)})</span><br>
+        <span class="sub">전고점 대비 <span class="${cls(e.dd)}">${e.dd.toFixed(2)}%</span>${e.underwater > 0 ? ` (언더워터 ${e.underwater}일)` : " (신고점)"}${md.fearGreed ? ` · 공포탐욕 ${md.fearGreed.score}(${fgKo(md.fearGreed.rating)})` : ""}</span><br>
+        <span class="sub">같은 돈이면: QQQ <span class="${cls(e.bqqq)}">${sign(e.bqqq)}</span> ·
+        QLD <span class="${cls(e.bqld)}">${sign(e.bqld)}</span> ·
+        나 <span class="${cls(e.sinceStart)}">${sign(e.sinceStart)}</span></span>
+      </div></div>
+      ${e.briefing ? `<div class="row2"><div class="tag">브리핑</div><div class="body brief">${e.briefing.text}</div></div>` : ""}
+      ${e.trades?.length ? `<div class="row2"><div class="tag">매매</div><div class="body"><b>${e.trades.map(t =>
+        `${t.name || t.ticker} ${t.delta > 0 ? "+" : ""}${t.delta}주`).join(", ")}</b></div></div>` : ""}
+      ${memo ? `<div class="row2"><div class="tag">메모</div><div class="body"><div class="memo">${memo}</div></div></div>` : ""}
+    </article>`;
+  }
+
+  /* 렌더 */
+  const rev = [...hist].reverse();
+  let shown = 10;
+  app.innerHTML = `
+    <div class="home-summary">
+      <div class="top"><span class="label">전체 평가액</span>
+        <span class="dplus">D+${dplus(last.date)} · ${hist.length}일째 기록</span></div>
+      <div class="amount">${won(last.totalKrw)}</div>
+      <div class="pl"><span class="${cls(last.dayChg)}">${signWon(last.dayChg)} (${sign(last.dayChgPct)})</span></div>
+      <div class="sub2">시작(${START.replaceAll("-", ".")}) 대비 ${sign(last.sinceStart)} ·
+        누적 손익 ${sign(last.plPct)} · 매일 아침 7시 자동 갱신</div>
+    </div>
+    <div class="chart-card" style="position:relative">
+      <h2>자산 추이 — 같은 돈을 QQQ·QLD에 넣었다면</h2>
+      <div class="chart-legend">
+        <span><span class="sw" style="background:${C.me}"></span>내 포트폴리오</span>
+        <span><span class="sw" style="background:${C.qqq}"></span>QQQ (1배)</span>
+        <span><span class="sw" style="background:${C.qld}"></span>QLD (2배)</span>
+      </div>
+      <div id="chart"></div>
+      <div class="chart-tip" id="tip"></div>
+    </div>
+    <a class="acct-link" href="{{ '/account/' | relative_url }}">계좌별 상세 잔고 보기 →</a>
+    <div class="feed"><h2>일지</h2><div id="feed"></div>
+      <button class="more-btn" id="more" style="display:none">지난 일지 더 보기</button></div>`;
+
+  function renderFeed() {
+    document.getElementById("feed").innerHTML =
+      rev.slice(0, shown).map((e, i) => entryHtml(e, i)).join("");
+    document.getElementById("more").style.display = shown < rev.length ? "block" : "none";
+    document.querySelectorAll(".copy-btn").forEach(btn => btn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(copyText(rev[+btn.dataset.i]));
+        btn.textContent = "복사됨 ✓"; setTimeout(() => btn.textContent = "복사", 1500);
+      } catch { btn.textContent = "실패"; }
+    });
+  }
+  renderFeed();
+  document.getElementById("more").onclick = () => { shown += 20; renderFeed(); };
+
+  /* 차트: 시작=0% 지수화 3개 라인 (단일 축) */
+  const box = document.getElementById("chart");
+  if (hist.length < 2) {
+    box.innerHTML = `<div class="chart-empty">이틀째 기록부터 그래프가 그려집니다</div>`;
+    return;
+  }
+  const S = [
+    { key: "me", label: "나", vals: hist.map(e => e.sinceStart) },
+    { key: "qqq", label: "QQQ", vals: hist.map(e => e.bqqq) },
+    { key: "qld", label: "QLD", vals: hist.map(e => e.bqld) },
+  ];
+  const W = box.clientWidth || 380, H = 190, P = { t: 8, r: 44, b: 20, l: 8 };
+  const all = S.flatMap(s => s.vals);
+  let lo = Math.min(...all, 0), hi = Math.max(...all, 0);
+  const pad = Math.max((hi - lo) * 0.1, 0.5); lo -= pad; hi += pad;
+  const x = i => P.l + (W - P.l - P.r) * (hist.length === 1 ? 0.5 : i / (hist.length - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo));
+  const ticks = [lo + (hi - lo) * 0.15, (lo + hi) / 2, lo + (hi - lo) * 0.85].map(v => Math.round(v * 10) / 10);
+  let svg = `<svg width="${W}" height="${H}" style="display:block">`;
+  for (const t of ticks) svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(t)}" y2="${y(t)}" stroke="#eceef1"/>` +
+    `<text x="${P.l + 2}" y="${y(t) - 3}" font-size="10" fill="#a5abb5">${t > 0 ? "+" : ""}${t}%</text>`;
+  svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(0)}" y2="${y(0)}" stroke="#d7dbe0" stroke-dasharray="3 3"/>`;
+  for (const s of S) {
+    const pts = s.vals.map((v, i) => `${x(i)},${y(v)}`).join(" ");
+    svg += `<polyline points="${pts}" fill="none" stroke="${C[s.key]}" stroke-width="2" stroke-linejoin="round"/>` +
+      `<circle cx="${x(hist.length - 1)}" cy="${y(s.vals[s.vals.length - 1])}" r="3" fill="${C[s.key]}"/>`;
+  }
+  /* 끝 라벨 겹침 방지: y 순 정렬 후 최소 12px 간격 확보 */
+  const ends = S.map(s => ({ label: s.label, y: y(s.vals[s.vals.length - 1]) }))
+                .sort((a, b) => a.y - b.y);
+  for (let i = 0; i < ends.length; i++) {
+    ends[i].y = Math.min(Math.max(ends[i].y, 16), H - P.b - 4 - (ends.length - 1 - i) * 12);
+    if (i > 0 && ends[i].y - ends[i - 1].y < 12) ends[i].y = ends[i - 1].y + 12;
+  }
+  for (const e2 of ends)
+    svg += `<text x="${W - P.r + 4}" y="${e2.y + 3}" font-size="10" font-weight="600" fill="#52514e">${e2.label}</text>`;
+  svg += `<line id="xh" y1="${P.t}" y2="${H - P.b}" stroke="#b9c0c9" stroke-width="1" style="display:none"/>`;
+  const d0 = hist[0].date.slice(5).replace("-", "."), d1 = last.date.slice(5).replace("-", ".");
+  svg += `<text x="${P.l}" y="${H - 5}" font-size="10" fill="#8a919c">${d0}</text>` +
+    `<text x="${W - P.r}" y="${H - 5}" font-size="10" fill="#8a919c" text-anchor="end">${d1}</text></svg>`;
+  box.innerHTML = svg;
+
+  /* 호버/터치 툴팁 */
+  const tip = document.getElementById("tip"), xh = document.getElementById("xh");
+  const svgEl = box.firstChild;
+  function showTip(ev) {
+    const rect = svgEl.getBoundingClientRect();
+    const px = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+    const i = Math.max(0, Math.min(hist.length - 1,
+      Math.round((px - P.l) / (W - P.l - P.r) * (hist.length - 1))));
+    const e = hist[i];
+    xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.style.display = "";
+    tip.innerHTML = `<b>${e.date.slice(5).replace("-", ".")}</b> ${won(e.totalKrw)}<br>` +
+      `나 ${sign(e.sinceStart)} · QQQ ${sign(e.bqqq)} · QLD ${sign(e.bqld)}`;
+    tip.style.display = "block";
+    const card = tip.parentElement.getBoundingClientRect();
+    let tx = rect.left - card.left + x(i) + 10;
+    if (tx + tip.offsetWidth > card.width - 8) tx = rect.left - card.left + x(i) - tip.offsetWidth - 10;
+    tip.style.left = Math.max(8, tx) + "px"; tip.style.top = (rect.top - card.top + 12) + "px";
+  }
+  function hideTip() { tip.style.display = "none"; xh.style.display = "none"; }
+  svgEl.addEventListener("pointermove", showTip);
+  svgEl.addEventListener("pointerleave", hideTip);
+  svgEl.addEventListener("touchstart", showTip, { passive: true });
+  svgEl.addEventListener("touchend", hideTip);
+})();
+</script>
