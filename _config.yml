@@ -1,0 +1,9 @@
+title: invest-log
+description: 익명 개인 투자 일기 — 매일 자동으로 갱신되는 실계좌 숫자
+lang: ko
+timezone: Asia/Seoul
+url: "https://yoonwu.github.io"
+baseurl: "/invest-log"
+exclude:
+  - scripts/
+  - README.md

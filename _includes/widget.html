@@ -1,0 +1,59 @@
+<div id="app">불러오는 중…</div>
+<script>
+const comma = n => Math.round(n).toLocaleString("ko-KR");
+const won = n => comma(n) + "원";
+const cls = n => n > 0 ? "up" : n < 0 ? "down" : "flat";
+const sign = n => n > 0 ? "+" : "";  // 음수는 자체 부호
+const arrow = n => n > 0 ? "▲ " : n < 0 ? "▼ " : "";
+const plLine = (krw, pct) =>
+  `<span class="${cls(krw)}">${arrow(krw)}${comma(Math.abs(krw))}원 (${sign(pct)}${pct.toFixed(2)}%)</span>`;
+const DISPLAY_NAME = { USD_CASH: "미국달러" };
+
+fetch("{{ '/data/valuation.json' | relative_url }}", { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => {
+    const acctHtml = d.accounts.map(a => `
+      <section class="acct">
+        <div class="acct-name">${a.name}</div>
+        <div class="card">
+          <div class="label">총 평가금액</div>
+          <div class="right">
+            <div class="amount">${won(a.totalKrw)}</div>
+            <div class="pl">${plLine(a.plKrw, a.plPct)}</div>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>종목명<br>보유수량</th>
+            <th>평가손익<br>손익률(%)</th>
+            <th>평가금액<br>매입금액</th>
+          </tr></thead>
+          <tbody>${a.holdings.map(h => `
+            <tr>
+              <td><div class="tname">${h.name || DISPLAY_NAME[h.ticker] || h.ticker}</div>
+                  <div class="sub">${comma(h.qty)}</div></td>
+              <td>${h.plKrw == null ? '<span class="sub">-</span>' : `
+                  <div class="${cls(h.plKrw)}">${sign(h.plKrw)}${comma(h.plKrw)}</div>
+                  <div class="${cls(h.plKrw)}">${sign(h.plPct)}${h.plPct.toFixed(2)}</div>`}
+              </td>
+              <td><div>${comma(h.valueKrw)}</div>
+                  <div class="sub">${h.costKrw == null ? "-" : comma(h.costKrw)}</div></td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </section>`).join("");
+
+    const at = new Date(d.generatedAt).toLocaleString("ko-KR",
+      { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
+    document.getElementById("app").innerHTML = `
+      <div class="summary">
+        <div class="label">전체 평가액</div>
+        <div class="amount">${won(d.totalKrw)}</div>
+        <div class="pl">${plLine(d.plKrw, d.plPct)}</div>
+      </div>
+      ${acctHtml}
+      <div class="meta">기준 ${at} · USD/KRW ${d.usdkrw.price.toFixed(2)}<br>
+        일 1회 자동 스냅샷 · 해외종목 매입금액은 당일 환율 환산 (환차손익 미포함)</div>`;
+  })
+  .catch(e => { document.getElementById("app").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
+</script>
