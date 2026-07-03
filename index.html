@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평가액 위젯</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1a1d21; --sub: #6b7280; --line: #e5e7eb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111418; --card: #1a1f26; --text: #e8eaed; --sub: #9aa1ab; --line: #2a313a; }
+  }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    display: flex; justify-content: center; padding: 24px 12px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px 22px; width: 100%; max-width: 380px;
+  }
+  .total-label { font-size: 13px; color: var(--sub); }
+  .total { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin: 2px 0 14px; }
+  .row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px;
+  }
+  .row .name { color: var(--sub); }
+  .row .val { font-variant-numeric: tabular-nums; }
+  .meta { margin-top: 14px; font-size: 12px; color: var(--sub); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="card" id="widget">불러오는 중…</div>
+<script>
+const won = n => n.toLocaleString("ko-KR") + "원";
+fetch("./data/valuation.json", { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => {
+    const rows = d.accounts.map(a =>
+      `<div class="row"><span class="name">${a.name}</span><span class="val">${won(a.totalKrw)}</span></div>`
+    ).join("");
+    const at = new Date(d.generatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
+    document.getElementById("widget").innerHTML =
+      `<div class="total-label">전체 평가액</div>
+       <div class="total">${won(d.totalKrw)}</div>
+       ${rows}
+       <div class="meta">기준 ${at} · USD/KRW ${d.usdkrw.price.toFixed(2)}<br>일 1회 자동 스냅샷 (장중 실시간 아님)</div>`;
+  })
+  .catch(e => { document.getElementById("widget").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
+</script>
+</body>
+</html>
