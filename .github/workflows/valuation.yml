@@ -3,6 +3,11 @@ name: valuation
 
 on:
   workflow_dispatch:
+  push:  # 검증 단계 임시 트리거 — 크론 붙일 때 제거 예정
+    paths:
+      - "scripts/**"
+      - "positions.json"
+      - ".github/workflows/valuation.yml"
 
 jobs:
   valuation:
