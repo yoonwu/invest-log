@@ -58,6 +58,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   const eok = n => n >= 1e8 ? (n / 1e8).toFixed(2) + "억" : comma(n / 1e4) + "만";
   const sign = n => (n > 0 ? "+" : "") + n.toFixed(2) + "%";
   const signWon = n => (n > 0 ? "▲ " : n < 0 ? "▼ " : "") + comma(Math.abs(n)) + "원";
+  const sw = n => (n > 0 ? "+" : n < 0 ? "-" : "") + comma(Math.abs(n)) + "원";
   const cls = n => n > 0 ? "up" : n < 0 ? "down" : "flat";
   const fgKo = r => ({ "extreme fear": "극단적 공포", fear: "공포", neutral: "중립",
                        greed: "탐욕", "extreme greed": "극단적 탐욕" })[r] || r;
@@ -145,7 +146,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
       </div>
       <div class="entry-total">
         <span class="tot">${won(e.totalKrw)}</span>
-        <span class="pill ${cls(e.dayChg)}">${signWon(e.dayChg)} · ${sign(e.dayChgPct)}</span>
+        <span class="pill ${cls(e.dayChg)}">${sw(e.dayChg)} · ${sign(e.dayChgPct)}</span>
       </div>
       <div class="entry-accts">${e.accounts.map(a => `${a.name} ${eok(a.totalKrw)}`).join(" · ")}<br>
         시작 대비 <b class="${cls(e.sinceStart)}">${sign(e.sinceStart)}</b> ·
@@ -194,12 +195,14 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   const rev = [...hist].reverse();
   let shown = 10;
   app.innerHTML = `
-    <div class="home-summary">
-      <div class="top"><span class="label">전체 평가액</span>
-        <span class="dplus">D+${dplus(last.date)} · ${hist.length}일째 기록</span></div>
-      <div class="amount">${won(last.totalKrw)}</div>
-      <div class="pl"><span class="${cls(last.dayChg)}">${signWon(last.dayChg)} (${sign(last.dayChgPct)})</span></div>
-      <div class="sub2">시작(${START.replaceAll("-", ".")}) 대비 ${sign(last.sinceStart)} ·
+    <div class="acard hero">
+      <div class="acard-head">
+        <span class="aname">전체 평가액</span>
+        <span class="dsub">D+${dplus(last.date)} · ${hist.length}일째 기록</span>
+      </div>
+      <div class="atotal">${won(last.totalKrw)}</div>
+      <div style="margin:9px 0 3px"><span class="pill ${cls(last.dayChg)}">${sw(last.dayChg)} · ${sign(last.dayChgPct)}</span></div>
+      <div class="asub" style="margin-bottom:2px">시작(${START.replaceAll("-", ".")}) 대비 ${sign(last.sinceStart)} ·
         누적 손익 ${sign(last.plPct)} · 매일 아침 7시 자동 갱신</div>
     </div>
     <div class="chart-card" style="position:relative">
