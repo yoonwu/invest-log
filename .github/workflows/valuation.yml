@@ -1,0 +1,12 @@
+# 평가액 계산 실행 (지금은 수동 트리거로 검증용 — 크론/커밋은 다음 단계에서 추가)
+name: valuation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  valuation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/fetch-valuation.mjs

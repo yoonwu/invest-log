@@ -1,0 +1,25 @@
+{
+  "accounts": [
+    {
+      "name": "TQQQ/SGOV",
+      "holdings": [
+        { "ticker": "TQQQ", "market": "US", "qty": 1279 },
+        { "ticker": "SGOV", "market": "US", "qty": 503 },
+        { "ticker": "SOXL", "market": "US", "qty": 18 },
+        { "ticker": "USD_CASH", "market": "CASH", "qty": 186 }
+      ]
+    },
+    {
+      "name": "연금저축계좌",
+      "holdings": [
+        { "ticker": "456600", "market": "KRX", "qty": 588, "name": "TIME글로벌AI" }
+      ]
+    },
+    {
+      "name": "Fomo",
+      "holdings": [
+        { "ticker": "0195S0", "market": "KRX", "qty": 160, "name": "TIGER SK하이닉스단일종목" }
+      ]
+    }
+  ]
+}
