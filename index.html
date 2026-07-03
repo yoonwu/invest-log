@@ -3,6 +3,17 @@ layout: default
 ---
 <div id="app">불러오는 중…</div>
 
+<section class="feed">
+  <h2>계좌별 잔고</h2>
+  {% include widget.html no_summary=true %}
+</section>
+
+<section class="feed">
+  <h2>일지</h2>
+  <div id="feed"></div>
+  <button class="more-btn" id="more" style="display:none">지난 일지 더 보기</button>
+</section>
+
 <section class="posts">
   <h2>일기</h2>
   <ul>
@@ -160,10 +171,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
       </div>
       <div id="chart"></div>
       <div class="chart-tip" id="tip"></div>
-    </div>
-    <a class="acct-link" href="{{ '/account/' | relative_url }}">계좌별 상세 잔고 보기 →</a>
-    <div class="feed"><h2>일지</h2><div id="feed"></div>
-      <button class="more-btn" id="more" style="display:none">지난 일지 더 보기</button></div>`;
+    </div>`;
 
   function renderFeed() {
     document.getElementById("feed").innerHTML =

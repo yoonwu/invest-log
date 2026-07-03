@@ -1,4 +1,4 @@
-<div id="app">불러오는 중…</div>
+<div id="acct" {% if include.no_summary %}data-no-summary{% endif %}>불러오는 중…</div>
 <script>
 const comma = n => Math.round(n).toLocaleString("ko-KR");
 const won = n => comma(n) + "원";
@@ -45,15 +45,18 @@ fetch("{{ '/data/valuation.json' | relative_url }}", { cache: "no-store" })
 
     const at = new Date(d.generatedAt).toLocaleString("ko-KR",
       { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
-    document.getElementById("app").innerHTML = `
+    const box = document.getElementById("acct");
+    const summary = box.dataset.noSummary !== undefined ? "" : `
       <div class="summary">
         <div class="label">전체 평가액</div>
         <div class="amount">${won(d.totalKrw)}</div>
         <div class="pl">${plLine(d.plKrw, d.plPct)}</div>
-      </div>
+      </div>`;
+    box.innerHTML = `
+      ${summary}
       ${acctHtml}
       <div class="meta">기준 ${at} · USD/KRW ${d.usdkrw.price.toFixed(2)}<br>
         일 1회 자동 스냅샷 · 해외종목 매입금액은 당일 환율 환산 (환차손익 미포함)</div>`;
   })
-  .catch(e => { document.getElementById("app").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
+  .catch(e => { document.getElementById("acct").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
 </script>
