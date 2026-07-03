@@ -39,7 +39,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
 (async function () {
   const app = document.getElementById("app");
   const START = "2026-07-03";
-  const C = { me: "#e8b23d", qqq: "#4a9dff", qld: "#8b93a3" };
+  const C = { me: "#b8860b", qqq: "#2b5fd9", qld: "#16a34a" };
   const comma = n => Math.round(n).toLocaleString("ko-KR");
   const won = n => comma(n) + "원";
   const eok = n => n >= 1e8 ? (n / 1e8).toFixed(2) + "억" : comma(n / 1e4) + "만";
@@ -236,9 +236,9 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   const y = v => P.t + (H - P.t - P.b) * (1 - (v - lo) / (hi - lo));
   const ticks = [lo + (hi - lo) * 0.15, (lo + hi) / 2, lo + (hi - lo) * 0.85].map(v => Math.round(v * 10) / 10);
   let svg = `<svg width="${W}" height="${H}" style="display:block">`;
-  for (const t of ticks) svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(t)}" y2="${y(t)}" stroke="#262b35"/>` +
-    `<text x="${P.l + 2}" y="${y(t) - 3}" font-size="10" fill="#8b93a3">${t > 0 ? "+" : ""}${t}%</text>`;
-  svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(0)}" y2="${y(0)}" stroke="#3a4150" stroke-dasharray="3 3"/>`;
+  for (const t of ticks) svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(t)}" y2="${y(t)}" stroke="#e7e8e3"/>` +
+    `<text x="${P.l + 2}" y="${y(t) - 3}" font-size="10" fill="#6b7280">${t > 0 ? "+" : ""}${t}%</text>`;
+  svg += `<line x1="${P.l}" x2="${W - P.r}" y1="${y(0)}" y2="${y(0)}" stroke="#c8cac3" stroke-dasharray="3 3"/>`;
   for (const s of S) {
     const pts = s.vals.map((v, i) => `${x(i)},${y(v)}`).join(" ");
     svg += `<polyline points="${pts}" fill="none" stroke="${C[s.key]}" stroke-width="2" stroke-linejoin="round"/>` +
@@ -252,11 +252,11 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     if (i > 0 && ends[i].y - ends[i - 1].y < 12) ends[i].y = ends[i - 1].y + 12;
   }
   for (const e2 of ends)
-    svg += `<text x="${W - P.r + 4}" y="${e2.y + 3}" font-size="10" font-weight="600" fill="#eef0f3">${e2.label}</text>`;
-  svg += `<line id="xh" y1="${P.t}" y2="${H - P.b}" stroke="#5c6474" stroke-width="1" style="display:none"/>`;
+    svg += `<text x="${W - P.r + 4}" y="${e2.y + 3}" font-size="10" font-weight="600" fill="#16181c">${e2.label}</text>`;
+  svg += `<line id="xh" y1="${P.t}" y2="${H - P.b}" stroke="#98a1ad" stroke-width="1" style="display:none"/>`;
   const d0 = hist[0].date.slice(5).replace("-", "."), d1 = last.date.slice(5).replace("-", ".");
-  svg += `<text x="${P.l}" y="${H - 5}" font-size="10" fill="#8a919c">${d0}</text>` +
-    `<text x="${W - P.r}" y="${H - 5}" font-size="10" fill="#8a919c" text-anchor="end">${d1}</text></svg>`;
+  svg += `<text x="${P.l}" y="${H - 5}" font-size="10" fill="#6b7280">${d0}</text>` +
+    `<text x="${W - P.r}" y="${H - 5}" font-size="10" fill="#6b7280" text-anchor="end">${d1}</text></svg>`;
   box.innerHTML = svg;
 
   /* 호버/터치 툴팁 */

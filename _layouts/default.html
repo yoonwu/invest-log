@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
 <style>
-  /* 다크 + 골드 — 트레이딩 데스크 톤. 숫자는 모노스페이스, 글은 세리프 프로즈로 분리 */
+  /* 라이트 + 브랜드 골드 포인트. 숫자는 모노스페이스, 글은 세리프 프로즈로 분리 */
   :root {
-    --bg: #0e1015;
-    --card: #171a21;
-    --card2: #1d2129;
-    --border: #262b35;
-    --text: #eef0f3;
-    --sub: #8b93a3;
-    --sub2: #5c6474;
-    --accent: #e8b23d;
-    --accent-soft: rgba(232, 178, 61, .14);
-    --up: #ef4a5a;   /* 상승 — 국내 증시 관례대로 빨강 */
-    --down: #4a7dff; /* 하락 — 파랑 */
-    --up-bg: rgba(239, 74, 90, .14);
-    --down-bg: rgba(74, 125, 255, .14);
+    --bg: #f4f5f3;
+    --card: #ffffff;
+    --card2: #fafaf8;
+    --border: #e7e8e3;
+    --text: #16181c;
+    --sub: #6b7280;
+    --sub2: #98a1ad;
+    --accent: #b8860b;
+    --accent-soft: rgba(184, 134, 11, .10);
+    --up: #d6303f;   /* 상승 — 국내 증시 관례대로 빨강 */
+    --down: #2b5fd9; /* 하락 — 파랑 */
+    --up-bg: rgba(214, 48, 63, .10);
+    --down-bg: rgba(43, 95, 217, .10);
     --mono: "SF Mono", "Roboto Mono", ui-monospace, Menlo, monospace;
     --prose: "Noto Serif KR", "Apple SD Gothic Neo", serif;
   }
@@ -75,7 +75,7 @@
   .post .back { display: inline-block; font-size: 13px; color: var(--sub); text-decoration: none; margin-bottom: 14px; }
   .post h1 { margin: 0 0 8px; font-family: var(--prose); font-size: 21px; line-height: 1.4; letter-spacing: -0.2px; }
   .post .post-date { color: var(--sub2); font-size: 12.5px; margin-bottom: 20px; }
-  .post-body { font-size: 16px; line-height: 1.9; font-family: var(--prose); color: #dfe3ea; word-break: keep-all; }
+  .post-body { font-size: 16px; line-height: 1.9; font-family: var(--prose); color: #262b33; word-break: keep-all; }
   .post-body p { margin: 0 0 18px; }
   .post-body h2 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--text);
                   border-bottom: 1px solid var(--border); padding-bottom: 8px; }
@@ -122,7 +122,7 @@
   .chip { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 4px 9px;
           font-size: 12px; color: var(--sub); white-space: nowrap; }
   .chip b { font-weight: 700; font-family: var(--mono); font-variant-numeric: tabular-nums; }
-  .trade-box { background: var(--accent-soft); border: 1px solid rgba(232, 178, 61, .3); border-radius: 8px;
+  .trade-box { background: var(--accent-soft); border: 1px solid rgba(184, 134, 11, .3); border-radius: 8px;
                padding: 9px 11px; font-size: 13.5px; font-weight: 700; color: var(--accent); }
   .brief-p { font-size: 13.5px; line-height: 1.75; color: var(--text); margin: 0; font-family: var(--prose); }
   .memo { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
