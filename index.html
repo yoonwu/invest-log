@@ -33,11 +33,15 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   const dow = d => "일월화수목금토"[new Date(d + "T00:00:00").getDay()];
   const dplus = d => Math.round((Date.parse(d) - Date.parse(START)) / 86400000) + 1;
 
-  let hist;
+  let hist, startData = null;
   try {
-    const r = await fetch("{{ '/data/history.json' | relative_url }}", { cache: "no-store" });
+    const [r, rs] = await Promise.all([
+      fetch("{{ '/data/history.json' | relative_url }}", { cache: "no-store" }),
+      fetch("{{ '/data/start.json' | relative_url }}").catch(() => null),
+    ]);
     if (!r.ok) throw new Error("HTTP " + r.status);
     hist = await r.json();
+    if (rs?.ok) startData = await rs.json();
   } catch (e) { app.textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; return; }
   if (!hist.length) { app.textContent = "데이터 없음"; return; }
 
@@ -66,6 +70,15 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     L.push(`[계좌] 총 ${won(e.totalKrw)} (전일 ${signWon(e.dayChg)}, ${sign(e.dayChgPct)})`);
     e.accounts.forEach(a => L.push(` · ${a.name} ${won(a.totalKrw)} (${sign(a.plPct)})`));
     L.push(`시작일 대비 ${sign(e.sinceStart)} · 전고점 대비 ${e.dd.toFixed(2)}%`);
+    if (e.date === START && startData) {
+      L.push("");
+      L.push(`[시작 박제] ${startData.generatedAt.slice(0, 10)} 기준 실제 보유 내역`);
+      for (const a of startData.accounts) {
+        L.push(`${a.name}`);
+        for (const h of a.holdings)
+          L.push(` · ${h.name || (h.ticker === "USD_CASH" ? "미국달러" : h.ticker)} ${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : "주"} — 매입 ${h.costKrw != null ? won(h.costKrw) : "-"} → 평가 ${won(h.valueKrw)}${h.plPct != null ? ` (${sign(h.plPct)})` : ""}`);
+      }
+    }
     L.push("");
     L.push(`[시장] 나스닥 ${sign(md.nasdaq.chgPct)} · S&P500 ${sign(md.sp500.chgPct)} · 반도체 ${sign(md.sox.chgPct)} · 미10년물 ${md.us10y}%`);
     const hc = Object.entries(e.holdingsChg).map(([t, v]) => `${t} ${sign(v)}`).join(" · ");
@@ -111,6 +124,14 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
         QLD <span class="${cls(e.bqld)}">${sign(e.bqld)}</span> ·
         나 <span class="${cls(e.sinceStart)}">${sign(e.sinceStart)}</span></span>
       </div></div>
+      ${e.date === START && startData ? `<div class="row2"><div class="tag">시작<br>박제</div><div class="body">
+        <span class="sub">${startData.generatedAt.slice(0, 10)} 기준 실제 보유 내역 — 이후 수량 변경은 전부 [매매]로 기록됨</span><br>
+        ${startData.accounts.map(a => `<b>${a.name}</b><br>` + a.holdings.map(h =>
+          `<span class="sub">· ${h.name || (h.ticker === "USD_CASH" ? "미국달러" : h.ticker)} ${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : "주"}
+           — 매입 ${h.costKrw != null ? won(h.costKrw) : "-"} → 평가 ${won(h.valueKrw)}
+           ${h.plPct != null ? `(<span class="${cls(h.plPct)}">${sign(h.plPct)}</span>)` : ""}</span>`
+        ).join("<br>")).join("<br>")}
+      </div></div>` : ""}
       ${e.briefing ? `<div class="row2"><div class="tag">브리핑</div><div class="body brief">${e.briefing.text}</div></div>` : ""}
       ${e.trades?.length ? `<div class="row2"><div class="tag">매매</div><div class="body"><b>${e.trades.map(t =>
         `${t.name || t.ticker} ${t.delta > 0 ? "+" : ""}${t.delta}주`).join(", ")}</b></div></div>` : ""}
