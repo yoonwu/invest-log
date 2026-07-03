@@ -47,15 +47,25 @@
   .meta { margin-top: 18px; font-size: 12px; color: var(--sub2); line-height: 1.7; text-align: center; }
 
   /* 계좌 카드 (요약·계좌별 잔고·일지 히어로 공통 컴포넌트) */
-  .acard { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 16px 6px; margin-bottom: 12px; }
+  .acard { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 16px 6px; margin-bottom: 12px; }
   .acard-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .acard-head .aname { font-size: 13px; font-weight: 700; color: var(--sub); }
   .acard .atotal { font-size: 20px; font-weight: 800; margin-top: 6px; letter-spacing: -0.3px;
                    font-family: var(--mono); font-variant-numeric: tabular-nums; }
   .acard .asub { font-size: 12px; color: var(--sub2); margin: 3px 0 12px; }
   .acard .dsub { font-size: 11px; color: var(--sub2); }
-  .acard.hero { padding-bottom: 16px; margin-bottom: 14px; }
-  .acard.hero .atotal { font-size: 28px; }
+
+  /* 히어로(전체 평가액) 카드만 다크+골드로 반전 — "오늘의 스탬프" 같은 포인트 */
+  .acard.hero { padding-bottom: 16px; margin-bottom: 14px; position: relative; overflow: hidden;
+                background: #14161c; border-color: #14161c; }
+  .acard.hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+  .acard.hero .aname { color: #9aa3b5; }
+  .acard.hero .dsub { color: #7d8494; }
+  .acard.hero .atotal { font-size: 28px; color: var(--accent); }
+  .acard.hero .asub { color: #9aa3b5; }
+  .acard.hero .pill.up { background: rgba(255, 93, 108, .18); color: #ff5d6c; }
+  .acard.hero .pill.down { background: rgba(91, 142, 255, .18); color: #5b8eff; }
+  .acard.hero .pill.flat { background: rgba(255, 255, 255, .1); color: #9aa3b5; }
 
   .hrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
           padding: 11px 0; border-top: 1px solid var(--border); }
@@ -69,9 +79,13 @@
   /* 글 목록 */
   .posts { margin-top: 30px; }
   .posts h2 { font-size: 17px; font-weight: 700; margin: 0 2px 10px; }
+  .posts h2::before, .feed h2::before {
+    content: ""; display: inline-block; width: 8px; height: 8px; background: var(--accent);
+    margin-right: 8px; vertical-align: 1px;
+  }
 
   /* 글 본문 — 데이터 카드와 분리된 프로즈 전용 타이포 */
-  .post { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 20px; margin-bottom: 14px; }
+  .post { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 20px; margin-bottom: 14px; }
   .post .back { display: inline-block; font-size: 13px; color: var(--sub); text-decoration: none; margin-bottom: 14px; }
   .post h1 { margin: 0 0 8px; font-family: var(--prose); font-size: 21px; line-height: 1.4; letter-spacing: -0.2px; }
   .post .post-date { color: var(--sub2); font-size: 12.5px; margin-bottom: 20px; }
@@ -92,7 +106,7 @@
   .post-body strong { color: var(--accent); font-weight: 700; }
 
   /* 자산 추이 차트 카드 */
-  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 14px 10px;
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px 10px;
                 margin-bottom: 12px; position: relative; }
   .chart-card h2 { font-size: 13.5px; font-weight: 700; margin: 0 4px 4px; }
   .chart-legend { display: flex; gap: 12px; font-size: 11px; color: var(--sub); margin: 0 4px 8px; }
@@ -104,7 +118,7 @@
 
   /* 일지 피드 */
   .feed h2 { font-size: 17px; font-weight: 700; margin: 26px 2px 10px; }
-  .entry { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 15px 16px; margin-bottom: 10px; }
+  .entry { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px 16px; margin-bottom: 10px; }
   .entry-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .entry-date { font-weight: 700; font-size: 14px; }
   .entry-date .dplus { font-weight: 500; font-size: 11px; color: var(--sub2); margin-left: 5px; }
@@ -126,7 +140,7 @@
                padding: 9px 11px; font-size: 13.5px; font-weight: 700; color: var(--accent); }
   .brief-p { font-size: 13.5px; line-height: 1.75; color: var(--text); margin: 0; font-family: var(--prose); }
   .memo { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
-  .more-btn { display: block; width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  .more-btn { display: block; width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 10px;
               padding: 12px; font-size: 13.5px; color: var(--sub); cursor: pointer; font-family: inherit; }
 
   details.pin { margin-top: 14px; }
