@@ -3,52 +3,112 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>평가액 위젯</title>
+<title>계좌별 종합잔고</title>
 <style>
-  :root {
-    --bg: #f6f7f9; --card: #ffffff; --text: #1a1d21; --sub: #6b7280; --line: #e5e7eb;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #111418; --card: #1a1f26; --text: #e8eaed; --sub: #9aa1ab; --line: #2a313a; }
-  }
+  /* 미래에셋 m.Stock 잔고 화면 모사 */
+  * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
+    margin: 0; background: #f5f6f8; color: #1a1d21;
     font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-    display: flex; justify-content: center; padding: 24px 12px;
   }
+  .wrap { max-width: 440px; margin: 0 auto; padding: 20px 14px 40px; }
+  h1 { font-size: 22px; font-weight: 800; margin: 4px 2px 16px; }
+
+  .summary { background: #fff; border-radius: 12px; padding: 16px 18px; margin-bottom: 22px; }
+  .summary .label { font-size: 13px; color: #6b7280; }
+  .summary .amount { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-top: 2px; }
+  .summary .pl { font-size: 14px; font-weight: 600; margin-top: 4px; }
+
+  .acct { margin-bottom: 26px; }
+  .acct-name { font-size: 15px; font-weight: 600; padding: 10px 4px; color: #333; }
+
   .card {
-    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 20px 22px; width: 100%; max-width: 380px;
+    background: #3f4a5a; color: #fff; border-radius: 10px;
+    padding: 18px 20px; display: flex; justify-content: space-between; align-items: flex-start;
   }
-  .total-label { font-size: 13px; color: var(--sub); }
-  .total { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin: 2px 0 14px; }
-  .row {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px;
+  .card .label { font-size: 14px; color: #cfd6e0; padding-top: 6px; }
+  .card .right { text-align: right; }
+  .card .amount { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .card .pl { font-size: 13px; font-weight: 600; margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 0 0 10px 10px; }
+  thead th {
+    font-size: 12px; font-weight: 500; color: #8a919c; background: #fafbfc;
+    padding: 8px 10px; border-bottom: 1px solid #eceef1; line-height: 1.5;
   }
-  .row .name { color: var(--sub); }
-  .row .val { font-variant-numeric: tabular-nums; }
-  .meta { margin-top: 14px; font-size: 12px; color: var(--sub); line-height: 1.6; }
+  thead th:first-child { text-align: left; }
+  thead th:not(:first-child) { text-align: right; }
+  tbody td { padding: 12px 10px; border-bottom: 1px solid #f0f2f4; font-size: 14px; vertical-align: top; line-height: 1.55; }
+  tbody td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+  .tname { font-weight: 600; font-size: 13.5px; }
+  .sub { color: #6b7280; font-size: 13px; }
+  .up { color: #ef3e42; }
+  .down { color: #3b6ce4; }
+  .flat { color: #1a1d21; }
+
+  .meta { margin-top: 18px; font-size: 12px; color: #8a919c; line-height: 1.7; text-align: center; }
 </style>
 </head>
 <body>
-<div class="card" id="widget">불러오는 중…</div>
+<div class="wrap" id="app">불러오는 중…</div>
 <script>
-const won = n => n.toLocaleString("ko-KR") + "원";
+const comma = n => Math.round(n).toLocaleString("ko-KR");
+const won = n => comma(n) + "원";
+const cls = n => n > 0 ? "up" : n < 0 ? "down" : "flat";
+const sign = n => n > 0 ? "+" : "";  // 음수는 자체 부호
+const arrow = n => n > 0 ? "▲ " : n < 0 ? "▼ " : "";
+const plLine = (krw, pct) =>
+  `<span class="${cls(krw)}">${arrow(krw)}${comma(Math.abs(krw))}원 (${sign(pct)}${pct.toFixed(2)}%)</span>`;
+const DISPLAY_NAME = { USD_CASH: "미국달러" };
+
 fetch("./data/valuation.json", { cache: "no-store" })
   .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
   .then(d => {
-    const rows = d.accounts.map(a =>
-      `<div class="row"><span class="name">${a.name}</span><span class="val">${won(a.totalKrw)}</span></div>`
-    ).join("");
-    const at = new Date(d.generatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
-    document.getElementById("widget").innerHTML =
-      `<div class="total-label">전체 평가액</div>
-       <div class="total">${won(d.totalKrw)}</div>
-       ${rows}
-       <div class="meta">기준 ${at} · USD/KRW ${d.usdkrw.price.toFixed(2)}<br>일 1회 자동 스냅샷 (장중 실시간 아님)</div>`;
+    const acctHtml = d.accounts.map(a => `
+      <section class="acct">
+        <div class="acct-name">${a.name}</div>
+        <div class="card">
+          <div class="label">총 평가금액</div>
+          <div class="right">
+            <div class="amount">${won(a.totalKrw)}</div>
+            <div class="pl">${plLine(a.plKrw, a.plPct)}</div>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>종목명<br>보유수량</th>
+            <th>평가손익<br>손익률(%)</th>
+            <th>평가금액<br>매입금액</th>
+          </tr></thead>
+          <tbody>${a.holdings.map(h => `
+            <tr>
+              <td><div class="tname">${h.name || DISPLAY_NAME[h.ticker] || h.ticker}</div>
+                  <div class="sub">${comma(h.qty)}</div></td>
+              <td>${h.plKrw == null ? '<span class="sub">-</span>' : `
+                  <div class="${cls(h.plKrw)}">${sign(h.plKrw)}${comma(h.plKrw)}</div>
+                  <div class="${cls(h.plKrw)}">${sign(h.plPct)}${h.plPct.toFixed(2)}</div>`}
+              </td>
+              <td><div>${comma(h.valueKrw)}</div>
+                  <div class="sub">${h.costKrw == null ? "-" : comma(h.costKrw)}</div></td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </section>`).join("");
+
+    const at = new Date(d.generatedAt).toLocaleString("ko-KR",
+      { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
+    document.getElementById("app").innerHTML = `
+      <h1>계좌별 종합잔고</h1>
+      <div class="summary">
+        <div class="label">전체 평가액</div>
+        <div class="amount">${won(d.totalKrw)}</div>
+        <div class="pl">${plLine(d.plKrw, d.plPct)}</div>
+      </div>
+      ${acctHtml}
+      <div class="meta">기준 ${at} · USD/KRW ${d.usdkrw.price.toFixed(2)}<br>
+        일 1회 자동 스냅샷 · 해외종목 매입금액은 당일 환율 환산 (환차손익 미포함)</div>`;
   })
-  .catch(e => { document.getElementById("widget").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
+  .catch(e => { document.getElementById("app").textContent = "데이터를 불러올 수 없음 (" + e.message + ")"; });
 </script>
 </body>
 </html>

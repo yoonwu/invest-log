@@ -134,18 +134,34 @@ for (const acc of positions.accounts) {
     } else {
       throw new Error(`알 수 없는 market: ${h.market} (${h.ticker})`);
     }
-    const valueKrw = Math.round(h.qty * quote.price * (currency === "USD" ? fx.price : 1));
+    const toKrw = currency === "USD" ? fx.price : 1;
+    const valueKrw = Math.round(h.qty * quote.price * toKrw);
+    // 손익은 증권사 표기 방식과 동일: 매입금액도 현재 환율로 환산 (환차손익 미포함)
+    const costKrw = h.market === "CASH" ? valueKrw
+                  : h.avgCost != null ? Math.round(h.qty * h.avgCost * toKrw) : null;
+    const plKrw = costKrw != null ? valueKrw - costKrw : null;
+    const plPct = h.market === "CASH" ? 0
+                : h.avgCost != null ? +(100 * (quote.price / h.avgCost - 1)).toFixed(2) : null;
     holdings.push({ ticker: h.ticker, ...(h.name && { name: h.name }), qty: h.qty,
-                    price: quote.price, currency, priceDate: quote.date, source: quote.source, valueKrw });
+                    price: quote.price, currency, priceDate: quote.date, source: quote.source,
+                    valueKrw, costKrw, plKrw, plPct });
   }
-  accounts.push({ name: acc.name, holdings, totalKrw: holdings.reduce((s, x) => s + x.valueKrw, 0) });
+  const totalKrw = holdings.reduce((s, x) => s + x.valueKrw, 0);
+  const costKrw = holdings.reduce((s, x) => s + (x.costKrw ?? x.valueKrw), 0);
+  accounts.push({ name: acc.name, holdings, totalKrw, costKrw,
+                  plKrw: totalKrw - costKrw, plPct: +(100 * (totalKrw / costKrw - 1)).toFixed(2) });
 }
 
+const totalKrw = accounts.reduce((s, a) => s + a.totalKrw, 0);
+const totalCostKrw = accounts.reduce((s, a) => s + a.costKrw, 0);
 const result = {
   generatedAt: new Date().toISOString(),
   usdkrw: { price: fx.price, date: fx.date, source: fx.source },
   accounts,
-  totalKrw: accounts.reduce((s, a) => s + a.totalKrw, 0),
+  totalKrw,
+  costKrw: totalCostKrw,
+  plKrw: totalKrw - totalCostKrw,
+  plPct: +(100 * (totalKrw / totalCostKrw - 1)).toFixed(2),
 };
 
 fs.mkdirSync(path.join(ROOT, "data"), { recursive: true });

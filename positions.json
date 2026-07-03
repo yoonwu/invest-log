@@ -3,22 +3,22 @@
     {
       "name": "TQQQ/SGOV",
       "holdings": [
-        { "ticker": "TQQQ", "market": "US", "qty": 1279 },
-        { "ticker": "SGOV", "market": "US", "qty": 503 },
-        { "ticker": "SOXL", "market": "US", "qty": 18 },
+        { "ticker": "TQQQ", "market": "US", "qty": 1279, "avgCost": 53.446 },
+        { "ticker": "SGOV", "market": "US", "qty": 503, "avgCost": 100.393 },
+        { "ticker": "SOXL", "market": "US", "qty": 18, "avgCost": 209.209 },
         { "ticker": "USD_CASH", "market": "CASH", "qty": 186 }
       ]
     },
     {
       "name": "연금저축계좌",
       "holdings": [
-        { "ticker": "456600", "market": "KRX", "qty": 588, "name": "TIME글로벌AI" }
+        { "ticker": "456600", "market": "KRX", "qty": 588, "name": "TIME글로벌AI", "avgCost": 42544.42 }
       ]
     },
     {
       "name": "Fomo",
       "holdings": [
-        { "ticker": "0195S0", "market": "KRX", "qty": 160, "name": "TIGER SK하이닉스단일종목" }
+        { "ticker": "0195S0", "market": "KRX", "qty": 160, "name": "TIGER SK하이닉스단일종목", "avgCost": 26863.75 }
       ]
     }
   ]
