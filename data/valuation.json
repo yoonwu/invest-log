@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-07-03T02:37:57.130Z",
+  "usdkrw": {
+    "price": 1539.97998046875,
+    "date": "2026-07-03",
+    "source": "yahoo"
+  },
+  "accounts": [
+    {
+      "name": "TQQQ/SGOV",
+      "holdings": [
+        {
+          "ticker": "TQQQ",
+          "qty": 1279,
+          "price": 73.3499984741211,
+          "currency": "USD",
+          "priceDate": "2026-07-02",
+          "source": "yahoo",
+          "valueKrw": 144472680
+        },
+        {
+          "ticker": "SGOV",
+          "qty": 503,
+          "price": 100.44000244140625,
+          "currency": "USD",
+          "priceDate": "2026-07-02",
+          "source": "yahoo",
+          "valueKrw": 77801823
+        },
+        {
+          "ticker": "SOXL",
+          "qty": 18,
+          "price": 181.47000122070312,
+          "currency": "USD",
+          "priceDate": "2026-07-02",
+          "source": "yahoo",
+          "valueKrw": 5030283
+        },
+        {
+          "ticker": "USD_CASH",
+          "qty": 186,
+          "price": 1,
+          "currency": "USD",
+          "priceDate": "2026-07-03",
+          "source": "fixed",
+          "valueKrw": 286436
+        }
+      ],
+      "totalKrw": 227591222
+    },
+    {
+      "name": "연금저축계좌",
+      "holdings": [
+        {
+          "ticker": "456600",
+          "name": "TIME글로벌AI",
+          "qty": 588,
+          "price": 68135,
+          "currency": "KRW",
+          "priceDate": "2026-07-03",
+          "source": "naver",
+          "valueKrw": 40063380
+        }
+      ],
+      "totalKrw": 40063380
+    },
+    {
+      "name": "Fomo",
+      "holdings": [
+        {
+          "ticker": "0195S0",
+          "name": "TIGER SK하이닉스단일종목",
+          "qty": 160,
+          "price": 20440,
+          "currency": "KRW",
+          "priceDate": "2026-07-03",
+          "source": "naver",
+          "valueKrw": 3270400
+        }
+      ],
+      "totalKrw": 3270400
+    }
+  ],
+  "totalKrw": 270925002
+}
