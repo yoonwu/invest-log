@@ -55,17 +55,10 @@
   .acard .asub { font-size: 12px; color: var(--sub2); margin: 3px 0 12px; }
   .acard .dsub { font-size: 11px; color: var(--sub2); }
 
-  /* 히어로(전체 평가액) 카드만 다크+골드로 반전 — "오늘의 스탬프" 같은 포인트 */
-  .acard.hero { padding-bottom: 16px; margin-bottom: 14px; position: relative; overflow: hidden;
-                background: #14161c; border-color: #14161c; }
+  /* 히어로(전체 평가액) 카드 — 화이트 유지, 숫자에만 골드 포인트로 강조 */
+  .acard.hero { padding-bottom: 16px; margin-bottom: 14px; position: relative; overflow: hidden; }
   .acard.hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
-  .acard.hero .aname { color: #9aa3b5; }
-  .acard.hero .dsub { color: #7d8494; }
   .acard.hero .atotal { font-size: 28px; color: var(--accent); }
-  .acard.hero .asub { color: #9aa3b5; }
-  .acard.hero .pill.up { background: rgba(255, 93, 108, .18); color: #ff5d6c; }
-  .acard.hero .pill.down { background: rgba(91, 142, 255, .18); color: #5b8eff; }
-  .acard.hero .pill.flat { background: rgba(255, 255, 255, .1); color: #9aa3b5; }
 
   .hrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
           padding: 11px 0; border-top: 1px solid var(--border); }
