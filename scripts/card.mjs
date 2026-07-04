@@ -12,8 +12,8 @@ const SITE_URL = "https://yoonwu.github.io/invest-log/";
 
 const hist = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "history.json"), "utf8"));
 if (!hist.length) { console.log("[card] history 비어있음 — 생략"); process.exit(0); }
-let startData = null;
-try { startData = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "start.json"), "utf8")); } catch {}
+let val = null;
+try { val = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "valuation.json"), "utf8")); } catch {}
 
 /* index.html과 동일한 파생값 계산 */
 const base = hist[0].totalKrw;
@@ -34,6 +34,7 @@ const e = hist[hist.length - 1];
 
 const comma = n => Math.round(n).toLocaleString("ko-KR");
 const won = n => comma(n) + "원";
+const eok = n => n >= 1e8 ? (n / 1e8).toFixed(2) + "억" : comma(n / 1e4) + "만";
 const sign = n => (n > 0 ? "+" : "") + n.toFixed(2) + "%";
 const sw = n => (n > 0 ? "+" : n < 0 ? "-" : "") + comma(Math.abs(n)) + "원";
 const cls = n => n > 0 ? "up" : n < 0 ? "down" : "flat";
@@ -86,6 +87,28 @@ const chips = Object.entries(e.holdingsChg).map(([t, v]) => {
   return `<span class="chip">${name} <b class="${cls(v)}">${sign(v)}</b></span>`;
 }).join("");
 
+/* 계좌별 잔고 상세 — valuation.json의 종목별 수량·매입·평가·손익까지 (홈 화면과 동일 정보) */
+const hname = h => h.name || (h.ticker === "USD_CASH" ? "미국달러" : h.ticker);
+const accountsHtml = val
+  ? val.accounts.map(a => `
+    <div class="acct">
+      <div class="ahead">
+        <span class="an">${a.name}</span>
+        <span class="pill sm mono ${cls(a.plKrw)}">${a.plKrw > 0 ? "+" : ""}${comma(a.plKrw)}원 · ${sign(a.plPct)}</span>
+      </div>
+      <div class="atot mono">${won(a.totalKrw)}</div>
+      <div class="acost">매입 ${won(a.costKrw)}</div>
+      ${a.holdings.map(h => `
+      <div class="hrow">
+        <div><div class="hn">${hname(h)}</div>
+          <div class="hs">${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : "주"} · 매입 ${eok(h.costKrw)}</div></div>
+        <div class="hr"><div class="hv mono">${won(h.valueKrw)}</div>
+          <div class="hs mono ${cls(h.plKrw)}">${h.plKrw > 0 ? "+" : ""}${comma(h.plKrw)}원 (${sign(h.plPct)})</div></div>
+      </div>`).join("")}
+    </div>`).join("")
+  : e.accounts.map(a => `<div class="arow"><span class="n">${a.name}</span>
+      <b class="mono">${won(a.totalKrw)} <span class="${cls(a.plPct)}">(${sign(a.plPct)})</span></b></div>`).join("");
+
 const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>
   * { box-sizing: border-box; margin: 0; }
   body { background: #f4f5f3; font-family: "Noto Sans CJK KR", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
@@ -102,6 +125,19 @@ const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>
   .pill.up { background: rgba(214,48,63,.10); color: #d6303f; }
   .pill.down { background: rgba(43,95,217,.10); color: #2b5fd9; }
   .pill.flat { background: #fafaf8; color: #6b7280; }
+  .pill.sm { font-size: 12px; padding: 4px 10px; margin-top: 0; }
+  .acct { border: 1px solid #e7e8e3; border-radius: 10px; padding: 14px 16px 4px; margin-bottom: 10px; }
+  .ahead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .ahead .an { font-size: 13px; font-weight: 700; color: #6b7280; }
+  .atot { font-size: 19px; font-weight: 800; margin-top: 6px; letter-spacing: -0.3px; }
+  .acost { font-size: 12px; color: #98a1ad; margin: 3px 0 11px; }
+  .hrow { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+          padding: 10px 0; border-top: 1px solid #e7e8e3; }
+  .hrow .hn { font-size: 14px; font-weight: 600; }
+  .hrow .hs { font-size: 11.5px; color: #98a1ad; margin-top: 2px; }
+  .hrow .hr { text-align: right; flex: none; }
+  .hrow .hv { font-size: 14px; font-weight: 650; }
+  .hrow .hs.up { color: #d6303f; } .hrow .hs.down { color: #2b5fd9; }
   .sub { font-size: 12.5px; color: #98a1ad; margin-top: 10px; }
   .up { color: #d6303f; } .down { color: #2b5fd9; } .flat { color: #6b7280; }
   .sec { font-size: 11.5px; color: #98a1ad; font-weight: 700; letter-spacing: .04em; margin: 20px 0 8px;
@@ -132,9 +168,8 @@ const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>
   <div><span class="pill mono ${cls(e.dayChg)}">전일 ${sw(e.dayChg)} · ${sign(e.dayChgPct)}</span></div>
   <div class="sub">시작(${START.replaceAll("-", ".")}) 대비 ${sign(e.sinceStart)} · 누적 손익 ${sign(e.plPct)} · 전고점 대비 ${e.dd.toFixed(2)}%</div>
 
-  <div class="sec">계좌별</div>
-  ${e.accounts.map(a => `<div class="arow"><span class="n">${a.name}</span>
-    <b class="mono">${won(a.totalKrw)} <span class="${cls(a.plPct)}">(${sign(a.plPct)})</span></b></div>`).join("")}
+  <div class="sec">계좌별 잔고</div>
+  ${accountsHtml}
 
   ${chartSvg()}
 

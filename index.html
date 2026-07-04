@@ -223,14 +223,8 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
         const resp = await fetch(cardUrl, { cache: "no-store" });
         if (!resp.ok) throw new Error();
         const blob = await resp.blob();
-        try {
-          await navigator.clipboard.write([new ClipboardItem({
-            "image/png": blob,
-            "text/plain": new Blob([copyText(rev[0])], { type: "text/plain" }),
-          })]);
-        } catch {
-          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        }
+        /* 이미지 단독으로만 담는다 — 텍스트를 같이 담으면 네이버 에디터가 텍스트를 우선해 붙여버림 */
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         cardBtn.textContent = "복사됨 ✓ 블로그에 붙여넣기";
         setTimeout(() => cardBtn.textContent = "카드 복사", 2500);
       } catch {
