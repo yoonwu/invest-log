@@ -129,10 +129,9 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
       <div class="entry-head">
         <div class="entry-date">${e.date.slice(5).replace("-", ".")} (${dow(e.date)})
           <span class="dplus">D+${dplus(e.date)}</span></div>
-        <div style="display:flex;gap:6px">
-          ${i === 0 ? `<a class="copy-btn" style="text-decoration:none" href="{{ '/data/card.png' | relative_url }}" target="_blank">카드 이미지</a>` : ""}
-          <button class="copy-btn" data-i="${i}">복사</button>
-        </div>
+        ${i === 0
+          ? `<button class="copy-btn" id="copy-card">카드 복사</button>`
+          : `<button class="copy-btn" data-i="${i}">복사</button>`}
       </div>
       <div class="entry-total">
         <span class="tot">${won(e.totalKrw)}</span>
@@ -210,12 +209,38 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     document.getElementById("feed").innerHTML =
       rev.slice(0, shown).map((e, i) => entryHtml(e, i)).join("");
     document.getElementById("more").style.display = shown < rev.length ? "block" : "none";
-    document.querySelectorAll(".copy-btn").forEach(btn => btn.onclick = async () => {
+    document.querySelectorAll(".copy-btn[data-i]").forEach(btn => btn.onclick = async () => {
       try {
         await navigator.clipboard.writeText(copyText(rev[+btn.dataset.i]));
         btn.textContent = "복사됨 ✓"; setTimeout(() => btn.textContent = "복사", 1500);
       } catch { btn.textContent = "실패"; }
     });
+    /* 최신 일지: 카드 이미지째로 클립보드에 — 네이버 에디터에 Ctrl+V 하면 이미지로 붙는다 */
+    const cardBtn = document.getElementById("copy-card");
+    if (cardBtn) cardBtn.onclick = async () => {
+      const cardUrl = "{{ '/data/card.png' | relative_url }}";
+      try {
+        const resp = await fetch(cardUrl, { cache: "no-store" });
+        if (!resp.ok) throw new Error();
+        const blob = await resp.blob();
+        try {
+          await navigator.clipboard.write([new ClipboardItem({
+            "image/png": blob,
+            "text/plain": new Blob([copyText(rev[0])], { type: "text/plain" }),
+          })]);
+        } catch {
+          await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        }
+        cardBtn.textContent = "복사됨 ✓ 블로그에 붙여넣기";
+        setTimeout(() => cardBtn.textContent = "카드 복사", 2500);
+      } catch {
+        /* 이미지 클립보드 미지원(구형 브라우저 등) → 이미지 새 탭 + 텍스트 복사로 폴백 */
+        try { await navigator.clipboard.writeText(copyText(rev[0])); } catch {}
+        window.open(cardUrl, "_blank");
+        cardBtn.textContent = "이미지를 직접 복사하세요";
+        setTimeout(() => cardBtn.textContent = "카드 복사", 2500);
+      }
+    };
   }
   renderFeed();
   document.getElementById("more").onclick = () => { shown += 20; renderFeed(); };
