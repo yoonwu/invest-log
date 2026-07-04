@@ -129,7 +129,10 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
       <div class="entry-head">
         <div class="entry-date">${e.date.slice(5).replace("-", ".")} (${dow(e.date)})
           <span class="dplus">D+${dplus(e.date)}</span></div>
-        <button class="copy-btn" data-i="${i}">복사</button>
+        <div style="display:flex;gap:6px">
+          ${i === 0 ? `<a class="copy-btn" style="text-decoration:none" href="{{ '/data/card.png' | relative_url }}" target="_blank">카드 이미지</a>` : ""}
+          <button class="copy-btn" data-i="${i}">복사</button>
+        </div>
       </div>
       <div class="entry-total">
         <span class="tot">${won(e.totalKrw)}</span>
