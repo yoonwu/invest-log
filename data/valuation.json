@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-04T22:52:06.978Z",
+  "generatedAt": "2026-07-05T22:56:23.977Z",
   "usdkrw": {
-    "price": 1530.1500244140625,
-    "date": "2026-07-03",
+    "price": 1529.1099853515625,
+    "date": "2026-07-05",
     "source": "yahoo"
   },
   "accounts": [
@@ -16,9 +16,9 @@
           "currency": "USD",
           "priceDate": "2026-07-02",
           "source": "yahoo",
-          "valueKrw": 143550486,
-          "costKrw": 104597129,
-          "plKrw": 38953357,
+          "valueKrw": 143452915,
+          "costKrw": 104526035,
+          "plKrw": 38926880,
           "plPct": 37.24
         },
         {
@@ -28,9 +28,9 @@
           "currency": "USD",
           "priceDate": "2026-07-02",
           "source": "yahoo",
-          "valueKrw": 77305201,
-          "costKrw": 77269025,
-          "plKrw": 36176,
+          "valueKrw": 77252657,
+          "costKrw": 77216505,
+          "plKrw": 36152,
           "plPct": 0.05
         },
         {
@@ -40,9 +40,9 @@
           "currency": "USD",
           "priceDate": "2026-07-02",
           "source": "yahoo",
-          "valueKrw": 4998174,
-          "costKrw": 5762181,
-          "plKrw": -764007,
+          "valueKrw": 4994777,
+          "costKrw": 5758264,
+          "plKrw": -763487,
           "plPct": -13.26
         },
         {
@@ -50,17 +50,17 @@
           "qty": 186,
           "price": 1,
           "currency": "USD",
-          "priceDate": "2026-07-03",
+          "priceDate": "2026-07-05",
           "source": "fixed",
-          "valueKrw": 284608,
-          "costKrw": 284608,
+          "valueKrw": 284414,
+          "costKrw": 284414,
           "plKrw": 0,
           "plPct": 0
         }
       ],
-      "totalKrw": 226138469,
-      "costKrw": 187912943,
-      "plKrw": 38225526,
+      "totalKrw": 225984763,
+      "costKrw": 187785218,
+      "plKrw": 38199545,
       "plPct": 20.34
     },
     {
@@ -130,8 +130,8 @@
       "plPct": -12.93
     }
   ],
-  "totalKrw": 298939969,
-  "costKrw": 236321062,
-  "plKrw": 62618907,
+  "totalKrw": 298786263,
+  "costKrw": 236193337,
+  "plKrw": 62592926,
   "plPct": 26.5
 }
