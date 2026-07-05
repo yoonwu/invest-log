@@ -155,7 +155,7 @@ for (const acc of positions.accounts) {
       throw new Error(`알 수 없는 market: ${h.market} (${h.ticker})`);
     }
     if (h.market !== "CASH") holdingsChg[h.ticker] = quote.chgPct;
-    qtyMap[h.ticker] = h.qty;
+    qtyMap[h.ticker] = (qtyMap[h.ticker] || 0) + h.qty; // 같은 티커가 여러 계좌에 있으면 합산
     const toKrw = currency === "USD" ? fx.price : 1;
     const valueKrw = Math.round(h.qty * quote.price * toKrw);
     // 손익은 증권사 표기 방식과 동일: 매입금액도 현재 환율로 환산 (환차손익 미포함)

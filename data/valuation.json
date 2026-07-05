@@ -86,6 +86,28 @@
       "plPct": 59.14
     },
     {
+      "name": "ISA",
+      "holdings": [
+        {
+          "ticker": "456600",
+          "name": "TIME글로벌AI",
+          "qty": 432,
+          "price": 67705,
+          "currency": "KRW",
+          "priceDate": "2026-07-03",
+          "source": "naver",
+          "valueKrw": 29248560,
+          "costKrw": 19093800,
+          "plKrw": 10154760,
+          "plPct": 53.18
+        }
+      ],
+      "totalKrw": 29248560,
+      "costKrw": 19093800,
+      "plKrw": 10154760,
+      "plPct": 53.18
+    },
+    {
       "name": "Fomo",
       "holdings": [
         {
@@ -108,8 +130,8 @@
       "plPct": -12.93
     }
   ],
-  "totalKrw": 269691409,
-  "costKrw": 217227262,
-  "plKrw": 52464147,
-  "plPct": 24.15
+  "totalKrw": 298939969,
+  "costKrw": 236321062,
+  "plKrw": 62618907,
+  "plPct": 26.5
 }

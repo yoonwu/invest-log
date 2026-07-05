@@ -16,6 +16,12 @@
       ]
     },
     {
+      "name": "ISA",
+      "holdings": [
+        { "ticker": "456600", "market": "KRX", "qty": 432, "name": "TIME글로벌AI", "avgCost": 44198.61 }
+      ]
+    },
+    {
       "name": "Fomo",
       "holdings": [
         { "ticker": "0195S0", "market": "KRX", "qty": 160, "name": "TIGER SK하이닉스단일종목", "avgCost": 26863.75 }
