@@ -11,8 +11,18 @@ layout: default
 <section class="feed">
   <h2>계좌일지</h2>
   <div id="feed"></div>
-  <button class="more-btn" id="more" style="display:none">지난 일지 더 보기</button>
-  {% for post in site.posts %}{% unless post.categories contains "생각" or post.categories contains "월결산" %}
+  {% assign journals = site.categories["일지"] | sort: "date" | reverse %}
+  {% if journals.size > 1 %}
+  <div class="journal-list">
+    {% assign last_month = "" %}
+    {% for p in journals offset:1 %}
+      {% assign this_month = p.date | date: "%Y.%m" %}
+      {% if this_month != last_month %}<div class="journal-month">{{ this_month }}</div>{% assign last_month = this_month %}{% endif %}
+      <a class="journal-link" href="{{ p.url | relative_url }}">{{ p.title }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% for post in site.posts %}{% unless post.categories contains "생각" or post.categories contains "월결산" or post.categories contains "일지" %}
     {% include post-card.html post=post %}
   {% endunless %}{% endfor %}
 </section>
@@ -120,7 +130,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   const gcell = (label, v, colored) =>
     `<span>${label}</span><b class="${colored ? cls(parseFloat(v)) : "flat"}">${v}</b>`;
 
-  function entryHtml(e, i) {
+  function entryHtml(e) {
     const md = e.market;
     const memo = window.MEMOS[e.date];
     const chips = Object.entries(e.holdingsChg).map(([t, v]) =>
@@ -129,9 +139,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
       <div class="entry-head">
         <div class="entry-date">${e.date.slice(5).replace("-", ".")} (${dow(e.date)})
           <span class="dplus">D+${dplus(e.date)}</span></div>
-        ${i === 0
-          ? `<button class="copy-btn" id="copy-card">카드 복사</button>`
-          : `<button class="copy-btn" data-i="${i}">복사</button>`}
+        <button class="copy-btn" id="copy-card">카드 복사</button>
       </div>
       <div class="entry-total">
         <span class="tot">${won(e.totalKrw)}</span>
@@ -181,8 +189,6 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   }
 
   /* 렌더 */
-  const rev = [...hist].reverse();
-  let shown = 10;
   app.innerHTML = `
     <div class="acard hero">
       <div class="acard-head">
@@ -206,18 +212,10 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     </div>`;
 
   function renderFeed() {
-    document.getElementById("feed").innerHTML =
-      rev.slice(0, shown).map((e, i) => entryHtml(e, i)).join("");
-    document.getElementById("more").style.display = shown < rev.length ? "block" : "none";
-    document.querySelectorAll(".copy-btn[data-i]").forEach(btn => btn.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(copyText(rev[+btn.dataset.i]));
-        btn.textContent = "복사됨 ✓"; setTimeout(() => btn.textContent = "복사", 1500);
-      } catch { btn.textContent = "실패"; }
-    });
-    /* 최신 일지: 카드 이미지째로 클립보드에 — 네이버 에디터에 Ctrl+V 하면 이미지로 붙는다 */
+    document.getElementById("feed").innerHTML = entryHtml(last);
+    /* 오늘 일지: 카드 이미지째로 클립보드에 — 네이버 에디터에 Ctrl+V 하면 이미지로 붙는다 */
     const cardBtn = document.getElementById("copy-card");
-    if (cardBtn) cardBtn.onclick = async () => {
+    cardBtn.onclick = async () => {
       const cardUrl = "{{ '/data/card.png' | relative_url }}";
       try {
         const resp = await fetch(cardUrl, { cache: "no-store" });
@@ -229,7 +227,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
         setTimeout(() => cardBtn.textContent = "카드 복사", 2500);
       } catch {
         /* 이미지 클립보드 미지원(구형 브라우저 등) → 이미지 새 탭 + 텍스트 복사로 폴백 */
-        try { await navigator.clipboard.writeText(copyText(rev[0])); } catch {}
+        try { await navigator.clipboard.writeText(copyText(last)); } catch {}
         window.open(cardUrl, "_blank");
         cardBtn.textContent = "이미지를 직접 복사하세요";
         setTimeout(() => cardBtn.textContent = "카드 복사", 2500);
@@ -237,7 +235,6 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     };
   }
   renderFeed();
-  document.getElementById("more").onclick = () => { shown += 20; renderFeed(); };
 
   /* 차트: 시작=0% 지수화 3개 라인 (단일 축) */
   const box = document.getElementById("chart");
