@@ -22,6 +22,9 @@ jobs:
           npm install @anthropic-ai/sdk --no-audit --no-fund --no-save --loglevel=error
           node scripts/briefing.mjs
         continue-on-error: true
+      - name: 일지 글 생성 (_posts/, 날짜별 고유 페이지)
+        run: node scripts/write-journal-posts.mjs
+        continue-on-error: true
       - name: 공유용 카드 이미지 (data/card.png)
         run: |
           sudo apt-get install -y fonts-noto-cjk >/dev/null 2>&1 || true
@@ -34,6 +37,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/
+          git add data/ _posts/
           if [ -d drafts ]; then git add drafts/; fi
           git diff --cached --quiet || { git commit -m "chore: 일지 스냅샷 $(TZ=Asia/Seoul date +%F)"; git push; }

@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<a class="back" href="{{ '/' | relative_url }}">← 홈 (오늘 숫자 보기)</a>
+{{ content }}
+{% assign journals = site.categories["일지"] | sort: "date" %}
+{% assign idx = -1 %}
+{% for p in journals %}{% if p.url == page.url %}{% assign idx = forloop.index0 %}{% endif %}{% endfor %}
+{% assign prev_idx = idx | minus: 1 %}
+{% assign next_idx = idx | plus: 1 %}
+<div class="journal-pager">
+  {% if idx > 0 %}<a href="{{ journals[prev_idx].url | relative_url }}">← 이전 일지</a>{% else %}<span></span>{% endif %}
+  {% if idx > -1 and next_idx < journals.size %}<a href="{{ journals[next_idx].url | relative_url }}">다음 일지 →</a>{% else %}<span></span>{% endif %}
+</div>
