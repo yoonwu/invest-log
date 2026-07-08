@@ -1,0 +1,15 @@
+# 임시 진단 워크플로 — 문제 티커 시세를 여러 소스로 조회해 로그만 출력(커밋 없음). 확인 후 제거 예정.
+name: price-debug
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "티커 코드"
+        required: false
+        default: "0195S0"
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/price-debug.mjs "${{ github.event.inputs.code }}"
