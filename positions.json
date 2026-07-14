@@ -4,9 +4,9 @@
       "name": "TQQQ/SGOV",
       "holdings": [
         { "ticker": "TQQQ", "market": "US", "qty": 1279, "avgCost": 53.446 },
-        { "ticker": "SGOV", "market": "US", "qty": 503, "avgCost": 100.393 },
+        { "ticker": "SGOV", "market": "US", "qty": 323, "avgCost": 100.393 },
         { "ticker": "SOXL", "market": "US", "qty": 18, "avgCost": 209.209 },
-        { "ticker": "USD_CASH", "market": "CASH", "qty": 186 }
+        { "ticker": "USD_CASH", "market": "CASH", "qty": 18280 }
       ]
     },
     {
@@ -25,6 +25,12 @@
       "name": "Fomo",
       "holdings": [
         { "ticker": "0195S0", "market": "KRX", "qty": 310, "name": "TIGER SK하이닉스단일종목레버리지", "avgCost": 20835.3226 }
+      ]
+    },
+    {
+      "name": "토스 볼스위칭",
+      "holdings": [
+        { "ticker": "TQQQ", "market": "US", "qty": 70, "avgCost": 64.97 }
       ]
     }
   ]
