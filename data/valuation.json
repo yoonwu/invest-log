@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-13T22:50:16.235Z",
+  "generatedAt": "2026-07-14T03:51:08.723Z",
   "usdkrw": {
-    "price": 1497.02001953125,
-    "date": "2026-07-13",
+    "price": 1487.02001953125,
+    "date": "2026-07-14",
     "source": "yahoo"
   },
   "accounts": [
@@ -16,9 +16,9 @@
           "currency": "USD",
           "priceDate": "2026-07-13",
           "source": "yahoo",
-          "valueKrw": 139082979,
-          "costKrw": 102332447,
-          "plKrw": 36750532,
+          "valueKrw": 138153914,
+          "costKrw": 101648873,
+          "plKrw": 36505041,
           "plPct": 35.91
         },
         {
@@ -28,9 +28,9 @@
           "currency": "USD",
           "priceDate": "2026-07-13",
           "source": "yahoo",
-          "valueKrw": 75691665,
-          "costKrw": 75596036,
-          "plKrw": 95629,
+          "valueKrw": 75186049,
+          "costKrw": 75091060,
+          "plKrw": 94989,
           "plPct": 0.13
         },
         {
@@ -40,9 +40,9 @@
           "currency": "USD",
           "priceDate": "2026-07-13",
           "source": "yahoo",
-          "valueKrw": 4456119,
-          "costKrw": 5637421,
-          "plKrw": -1181302,
+          "valueKrw": 4426353,
+          "costKrw": 5599763,
+          "plKrw": -1173410,
           "plPct": -20.95
         },
         {
@@ -50,17 +50,17 @@
           "qty": 186,
           "price": 1,
           "currency": "USD",
-          "priceDate": "2026-07-13",
+          "priceDate": "2026-07-14",
           "source": "fixed",
-          "valueKrw": 278446,
-          "costKrw": 278446,
+          "valueKrw": 276586,
+          "costKrw": 276586,
           "plKrw": 0,
           "plPct": 0
         }
       ],
-      "totalKrw": 219509209,
-      "costKrw": 183844350,
-      "plKrw": 35664859,
+      "totalKrw": 218042902,
+      "costKrw": 182616282,
+      "plKrw": 35426620,
       "plPct": 19.4
     },
     {
@@ -70,20 +70,20 @@
           "ticker": "456600",
           "name": "TIME글로벌AI",
           "qty": 588,
-          "price": 65275,
+          "price": 63370,
           "currency": "KRW",
-          "priceDate": "2026-07-13",
+          "priceDate": "2026-07-14",
           "source": "naver",
-          "valueKrw": 38381700,
+          "valueKrw": 37261560,
           "costKrw": 25016119,
-          "plKrw": 13365581,
-          "plPct": 53.43
+          "plKrw": 12245441,
+          "plPct": 48.95
         }
       ],
-      "totalKrw": 38381700,
+      "totalKrw": 37261560,
       "costKrw": 25016119,
-      "plKrw": 13365581,
-      "plPct": 53.43
+      "plKrw": 12245441,
+      "plPct": 48.95
     },
     {
       "name": "ISA",
@@ -92,46 +92,46 @@
           "ticker": "456600",
           "name": "TIME글로벌AI",
           "qty": 432,
-          "price": 65275,
+          "price": 63370,
           "currency": "KRW",
-          "priceDate": "2026-07-13",
+          "priceDate": "2026-07-14",
           "source": "naver",
-          "valueKrw": 28198800,
+          "valueKrw": 27375840,
           "costKrw": 19093800,
-          "plKrw": 9105000,
-          "plPct": 47.69
+          "plKrw": 8282040,
+          "plPct": 43.38
         }
       ],
-      "totalKrw": 28198800,
+      "totalKrw": 27375840,
       "costKrw": 19093800,
-      "plKrw": 9105000,
-      "plPct": 47.69
+      "plKrw": 8282040,
+      "plPct": 43.38
     },
     {
       "name": "Fomo",
       "holdings": [
         {
           "ticker": "0195S0",
-          "name": "TIGER SK하이닉스단일종목",
-          "qty": 160,
-          "price": 12510,
+          "name": "TIGER SK하이닉스단일종목레버리지",
+          "qty": 310,
+          "price": 11260,
           "currency": "KRW",
-          "priceDate": "2026-07-13",
+          "priceDate": "2026-07-14",
           "source": "naver",
-          "valueKrw": 2001600,
-          "costKrw": 4298200,
-          "plKrw": -2296600,
-          "plPct": -53.43
+          "valueKrw": 3490600,
+          "costKrw": 6458950,
+          "plKrw": -2968350,
+          "plPct": -45.96
         }
       ],
-      "totalKrw": 2001600,
-      "costKrw": 4298200,
-      "plKrw": -2296600,
-      "plPct": -53.43
+      "totalKrw": 3490600,
+      "costKrw": 6458950,
+      "plKrw": -2968350,
+      "plPct": -45.96
     }
   ],
-  "totalKrw": 288091309,
-  "costKrw": 232252469,
-  "plKrw": 55838840,
-  "plPct": 24.04
+  "totalKrw": 286170902,
+  "costKrw": 233185151,
+  "plKrw": 52985751,
+  "plPct": 22.72
 }
