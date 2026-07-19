@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-18T22:41:40.575Z",
+  "generatedAt": "2026-07-19T22:43:40.630Z",
   "usdkrw": {
-    "price": 1487.4599609375,
-    "date": "2026-07-17",
+    "price": 1486.6700439453125,
+    "date": "2026-07-19",
     "source": "yahoo"
   },
   "accounts": [
@@ -16,9 +16,9 @@
           "currency": "USD",
           "priceDate": "2026-07-17",
           "source": "yahoo",
-          "valueKrw": 128473209,
-          "costKrw": 101678946,
-          "plKrw": 26794263,
+          "valueKrw": 128404983,
+          "costKrw": 101624949,
+          "plKrw": 26780034,
           "plPct": 26.35
         },
         {
@@ -28,9 +28,9 @@
           "currency": "USD",
           "priceDate": "2026-07-17",
           "source": "yahoo",
-          "valueKrw": 48323618,
-          "costKrw": 48233773,
-          "plKrw": 89845,
+          "valueKrw": 48297956,
+          "costKrw": 48208159,
+          "plKrw": 89797,
           "plPct": 0.19
         },
         {
@@ -40,28 +40,28 @@
           "currency": "USD",
           "priceDate": "2026-07-17",
           "source": "yahoo",
-          "valueKrw": 3627112,
-          "costKrw": 5601420,
-          "plKrw": -1974308,
+          "valueKrw": 3625185,
+          "costKrw": 5598446,
+          "plKrw": -1973261,
           "plPct": -35.25
         },
         {
           "ticker": "USD_CASH",
-          "qty": 18280,
+          "qty": 186,
           "price": 1,
           "currency": "USD",
-          "priceDate": "2026-07-17",
+          "priceDate": "2026-07-19",
           "source": "fixed",
-          "valueKrw": 27190768,
-          "costKrw": 27190768,
+          "valueKrw": 276521,
+          "costKrw": 276521,
           "plKrw": 0,
           "plPct": 0
         }
       ],
-      "totalKrw": 207614707,
-      "costKrw": 182704907,
-      "plKrw": 24909800,
-      "plPct": 13.63
+      "totalKrw": 180604645,
+      "costKrw": 155708075,
+      "plKrw": 24896570,
+      "plPct": 15.99
     },
     {
       "name": "연금저축계좌",
@@ -134,25 +134,25 @@
       "holdings": [
         {
           "ticker": "TQQQ",
-          "qty": 70,
+          "qty": 311,
           "price": 67.52999877929688,
           "currency": "USD",
           "priceDate": "2026-07-17",
           "source": "yahoo",
-          "valueKrw": 7031372,
-          "costKrw": 6764819,
-          "plKrw": 266553,
-          "plPct": 3.94
+          "valueKrw": 31222791,
+          "costKrw": 32931191,
+          "plKrw": -1708400,
+          "plPct": -5.19
         }
       ],
-      "totalKrw": 7031372,
-      "costKrw": 6764819,
-      "plKrw": 266553,
-      "plPct": 3.94
+      "totalKrw": 31222791,
+      "costKrw": 32931191,
+      "plKrw": -1708400,
+      "plPct": -5.19
     }
   ],
-  "totalKrw": 282058979,
-  "costKrw": 240038595,
-  "plKrw": 42020384,
-  "plPct": 17.51
+  "totalKrw": 279240336,
+  "costKrw": 239208135,
+  "plKrw": 40032201,
+  "plPct": 16.74
 }
