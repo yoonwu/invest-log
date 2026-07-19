@@ -6,7 +6,7 @@
         { "ticker": "TQQQ", "market": "US", "qty": 1279, "avgCost": 53.446 },
         { "ticker": "SGOV", "market": "US", "qty": 323, "avgCost": 100.393 },
         { "ticker": "SOXL", "market": "US", "qty": 18, "avgCost": 209.209 },
-        { "ticker": "USD_CASH", "market": "CASH", "qty": 18280 }
+        { "ticker": "USD_CASH", "market": "CASH", "qty": 186 }
       ]
     },
     {
@@ -30,7 +30,7 @@
     {
       "name": "토스 볼스위칭",
       "holdings": [
-        { "ticker": "TQQQ", "market": "US", "qty": 70, "avgCost": 64.97 }
+        { "ticker": "TQQQ", "market": "US", "qty": 311, "avgCost": 71.225 }
       ]
     }
   ]
