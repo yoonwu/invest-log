@@ -49,7 +49,7 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
 (async function () {
   const app = document.getElementById("app");
   const START = "2026-07-03";
-  const C = { me: "#4b5563", qqq: "#2b5fd9", qld: "#16a34a" };
+  const C = { me: "#4b5563", qqq: "#2b5fd9", qld: "#16a34a", sp500: "#d97706", soxl: "#9333ea" };
   const comma = n => Math.round(n).toLocaleString("ko-KR");
   const won = n => comma(n) + "원";
   const eok = n => n >= 1e8 ? (n / 1e8).toFixed(2) + "억" : comma(n / 1e4) + "만";
@@ -77,6 +77,8 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
   /* 파생값: 전일비 · 전고점/MDD · 벤치마크(같은 돈을 QQQ/QLD에 넣었다면, 원화 기준) */
   const h0 = hist[0], base = h0.totalKrw;
   const bq0 = h0.market.qqq.close * h0.usdkrw.price, bl0 = h0.market.qld.close * h0.usdkrw.price;
+  const bs0 = h0.market.sp500.close * h0.usdkrw.price;
+  const bx0 = h0.market.soxl ? h0.market.soxl.close * h0.usdkrw.price : null;
   let peak = -Infinity, peakDate = h0.date;
   hist.forEach((e, i) => {
     e.prev = hist[i - 1] || null;
@@ -88,6 +90,8 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     e.underwater = Math.round((Date.parse(e.date) - Date.parse(peakDate)) / 86400000);
     e.bqqq = 100 * (e.market.qqq.close * e.usdkrw.price / bq0 - 1);
     e.bqld = 100 * (e.market.qld.close * e.usdkrw.price / bl0 - 1);
+    e.bsp500 = 100 * (e.market.sp500.close * e.usdkrw.price / bs0 - 1);
+    if (bx0 && e.market.soxl) e.bsoxl = 100 * (e.market.soxl.close * e.usdkrw.price / bx0 - 1);
   });
   const last = hist[hist.length - 1];
 
@@ -201,12 +205,8 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
         누적 손익 ${sign(last.plPct)} · 매일 아침 7시 자동 갱신</div>
     </div>
     <div class="chart-card" style="position:relative">
-      <h2>자산 추이 — 같은 돈을 QQQ·QLD에 넣었다면</h2>
-      <div class="chart-legend">
-        <span><span class="sw" style="background:${C.me}"></span>내 포트폴리오</span>
-        <span><span class="sw" style="background:${C.qqq}"></span>QQQ (1배)</span>
-        <span><span class="sw" style="background:${C.qld}"></span>QLD (2배)</span>
-      </div>
+      <h2>자산 추이 — 같은 돈을 다른 자산에 넣었다면</h2>
+      <div class="chart-legend" id="chart-legend"></div>
       <div id="chart"></div>
       <div class="chart-tip" id="tip"></div>
     </div>`;
@@ -243,10 +243,15 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     return;
   }
   const S = [
-    { key: "me", label: "나", vals: hist.map(e => e.sinceStart) },
-    { key: "qqq", label: "QQQ", vals: hist.map(e => e.bqqq) },
-    { key: "qld", label: "QLD", vals: hist.map(e => e.bqld) },
+    { key: "me", label: "나", lg: "내 포트폴리오", vals: hist.map(e => e.sinceStart) },
+    { key: "qqq", label: "QQQ", lg: "QQQ (1배)", vals: hist.map(e => e.bqqq) },
+    { key: "qld", label: "QLD", lg: "QLD (2배)", vals: hist.map(e => e.bqld) },
+    { key: "sp500", label: "S&P", lg: "S&P500", vals: hist.map(e => e.bsp500) },
   ];
+  if (hist.every(e => e.bsoxl != null))
+    S.push({ key: "soxl", label: "SOXL", lg: "SOXL (3배)", vals: hist.map(e => e.bsoxl) });
+  document.getElementById("chart-legend").innerHTML = S.map(s =>
+    `<span><span class="sw" style="background:${C[s.key]}"></span>${s.lg}</span>`).join("");
   const W = box.clientWidth || 380, H = 190, P = { t: 8, r: 44, b: 20, l: 8 };
   const all = S.flatMap(s => s.vals);
   let lo = Math.min(...all, 0), hi = Math.max(...all, 0);
@@ -289,7 +294,8 @@ window.SITE_URL = "{{ site.url }}{{ site.baseurl }}/";
     const e = hist[i];
     xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.style.display = "";
     tip.innerHTML = `<b>${e.date.slice(5).replace("-", ".")}</b> ${won(e.totalKrw)}<br>` +
-      `나 ${sign(e.sinceStart)} · QQQ ${sign(e.bqqq)} · QLD ${sign(e.bqld)}`;
+      `나 ${sign(e.sinceStart)} · QQQ ${sign(e.bqqq)} · QLD ${sign(e.bqld)} · S&P ${sign(e.bsp500)}` +
+      (e.bsoxl != null ? ` · SOXL ${sign(e.bsoxl)}` : "");
     tip.style.display = "block";
     const card = tip.parentElement.getBoundingClientRect();
     let tx = rect.left - card.left + x(i) + 10;

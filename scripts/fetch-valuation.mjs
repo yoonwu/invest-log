@@ -175,9 +175,9 @@ for (const acc of positions.accounts) {
 }
 
 /* 지수·벤치마크 */
-const [nasdaq, sp500, sox, tnx, qqq, qld] = await Promise.all([
+const [nasdaq, sp500, sox, tnx, qqq, qld, soxl] = await Promise.all([
   yahooOnly("^IXIC"), yahooOnly("^GSPC"), yahooOnly("^SOX"),
-  yahooOnly("^TNX"), usQuote("QQQ"), usQuote("QLD"),
+  yahooOnly("^TNX"), usQuote("QQQ"), usQuote("QLD"), usQuote("SOXL"),
 ]);
 const us10y = tnx.price > 20 ? +(tnx.price / 10).toFixed(2) : +tnx.price.toFixed(2);
 const fg = await fearGreed();
@@ -231,6 +231,7 @@ const entry = {
     us10y,
     qqq: { close: qqq.price, chgPct: qqq.chgPct },
     qld: { close: qld.price, chgPct: qld.chgPct },
+    soxl: { close: soxl.price, chgPct: soxl.chgPct },
     fearGreed: fg,
   },
   briefing: oldToday?.briefing ?? null,

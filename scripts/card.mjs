@@ -19,6 +19,8 @@ try { val = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "valuation.json")
 const base = hist[0].totalKrw;
 const bq0 = hist[0].market.qqq.close * hist[0].usdkrw.price;
 const bl0 = hist[0].market.qld.close * hist[0].usdkrw.price;
+const bs0 = hist[0].market.sp500.close * hist[0].usdkrw.price;
+const bx0 = hist[0].market.soxl ? hist[0].market.soxl.close * hist[0].usdkrw.price : null;
 let peak = -Infinity;
 hist.forEach((e, i) => {
   const prev = hist[i - 1];
@@ -29,6 +31,8 @@ hist.forEach((e, i) => {
   e.dd = 100 * (e.totalKrw / peak - 1);
   e.bqqq = 100 * (e.market.qqq.close * e.usdkrw.price / bq0 - 1);
   e.bqld = 100 * (e.market.qld.close * e.usdkrw.price / bl0 - 1);
+  e.bsp500 = 100 * (e.market.sp500.close * e.usdkrw.price / bs0 - 1);
+  if (bx0 && e.market.soxl) e.bsoxl = 100 * (e.market.soxl.close * e.usdkrw.price / bx0 - 1);
 });
 const e = hist[hist.length - 1];
 
@@ -50,7 +54,10 @@ function chartSvg() {
     { label: "나", color: "#4b5563", vals: hist.map(x => x.sinceStart) },
     { label: "QQQ", color: "#2b5fd9", vals: hist.map(x => x.bqqq) },
     { label: "QLD", color: "#16a34a", vals: hist.map(x => x.bqld) },
+    { label: "S&P", color: "#d97706", vals: hist.map(x => x.bsp500) },
   ];
+  if (hist.every(x => x.bsoxl != null))
+    S.push({ label: "SOXL", color: "#9333ea", vals: hist.map(x => x.bsoxl) });
   const W = 632, H = 190, P = { t: 10, r: 46, b: 22, l: 8 };
   const all = S.flatMap(s => s.vals);
   let lo = Math.min(...all, 0), hi = Math.max(...all, 0);
@@ -78,7 +85,7 @@ function chartSvg() {
   const d0 = hist[0].date.slice(5).replace("-", "."), d1 = e.date.slice(5).replace("-", ".");
   svg += `<text x="${P.l}" y="${H - 5}" font-size="10" fill="#6b7280">${d0}</text>` +
     `<text x="${W - P.r}" y="${H - 5}" font-size="10" fill="#6b7280" text-anchor="end">${d1}</text></svg>`;
-  return `<div class="sec">자산 추이 — 같은 돈을 QQQ·QLD에 넣었다면</div>${svg}`;
+  return `<div class="sec">자산 추이 — 같은 돈을 다른 자산에 넣었다면</div>${svg}`;
 }
 
 const md = e.market;
