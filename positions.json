@@ -24,7 +24,8 @@
     {
       "name": "Fomo",
       "holdings": [
-        { "ticker": "0195S0", "market": "KRX", "qty": 310, "name": "TIGER SK하이닉스단일종목레버리지", "avgCost": 20835.3226 }
+        { "ticker": "0195S0", "market": "KRX", "qty": 530, "name": "TIGER SK하이닉스단일종목레버리지", "avgCost": 15984.8113 },
+        { "ticker": "KRW_CASH", "market": "CASH_KRW", "qty": 487000, "name": "원화" }
       ]
     },
     {

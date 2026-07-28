@@ -108,7 +108,7 @@ const accountsHtml = val
       ${a.holdings.map(h => `
       <div class="hrow">
         <div><div class="hn">${hname(h)}</div>
-          <div class="hs">${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : "주"} · 매입 ${eok(h.costKrw)}</div></div>
+          <div class="hs">${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : h.ticker === "KRW_CASH" ? "원" : "주"}${h.ticker === "USD_CASH" || h.ticker === "KRW_CASH" ? "" : ` · 매입 ${eok(h.costKrw)}`}</div></div>
         <div class="hr"><div class="hv mono">${won(h.valueKrw)}</div>
           <div class="hs mono ${cls(h.plKrw)}">${h.plKrw > 0 ? "+" : ""}${comma(h.plKrw)}원 (${sign(h.plPct)})</div></div>
       </div>`).join("")}

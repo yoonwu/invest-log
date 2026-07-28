@@ -24,7 +24,7 @@
             <div class="hrow">
               <div>
                 <div class="hn">${h.name || DISPLAY_NAME[h.ticker] || h.ticker}</div>
-                <div class="hs">${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : "주"}${h.costKrw != null && h.ticker !== "USD_CASH" ? ` · 매입 ${eok(h.costKrw)}` : ""}</div>
+                <div class="hs">${comma(h.qty)}${h.ticker === "USD_CASH" ? "달러" : h.ticker === "KRW_CASH" ? "원" : "주"}${h.costKrw != null && h.ticker !== "USD_CASH" && h.ticker !== "KRW_CASH" ? ` · 매입 ${eok(h.costKrw)}` : ""}</div>
               </div>
               <div class="hr">
                 <div class="hv">${won(h.valueKrw)}</div>

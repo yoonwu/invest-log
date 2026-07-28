@@ -151,18 +151,21 @@ for (const acc of positions.accounts) {
       currency = "KRW";
     } else if (h.market === "CASH") {
       quote = { price: 1, date: fx.date, source: "fixed", chgPct: 0 }; currency = "USD";
+    } else if (h.market === "CASH_KRW") {
+      quote = { price: 1, date: fx.date, source: "fixed", chgPct: 0 }; currency = "KRW";
     } else {
       throw new Error(`알 수 없는 market: ${h.market} (${h.ticker})`);
     }
-    if (h.market !== "CASH") holdingsChg[h.ticker] = quote.chgPct;
+    const isCash = h.market === "CASH" || h.market === "CASH_KRW";
+    if (!isCash) holdingsChg[h.ticker] = quote.chgPct;
     qtyMap[h.ticker] = (qtyMap[h.ticker] || 0) + h.qty; // 같은 티커가 여러 계좌에 있으면 합산
     const toKrw = currency === "USD" ? fx.price : 1;
     const valueKrw = Math.round(h.qty * quote.price * toKrw);
     // 손익은 증권사 표기 방식과 동일: 매입금액도 현재 환율로 환산 (환차손익 미포함)
-    const costKrw = h.market === "CASH" ? valueKrw
+    const costKrw = isCash ? valueKrw
                   : h.avgCost != null ? Math.round(h.qty * h.avgCost * toKrw) : null;
     const plKrw = costKrw != null ? valueKrw - costKrw : null;
-    const plPct = h.market === "CASH" ? 0
+    const plPct = isCash ? 0
                 : h.avgCost != null ? +(100 * (quote.price / h.avgCost - 1)).toFixed(2) : null;
     holdings.push({ ticker: h.ticker, ...(h.name && { name: h.name }), qty: h.qty,
                     price: quote.price, currency, priceDate: quote.date, source: quote.source,
@@ -208,6 +211,7 @@ if (prevEntry?.qty) {
   const names = {};
   for (const a of positions.accounts) for (const h of a.holdings) names[h.ticker] = h.name || h.ticker;
   for (const [t, q] of Object.entries(qtyMap)) {
+    if (t === "USD_CASH" || t === "KRW_CASH") continue; // 현금 입출금은 매매가 아님
     const pq = prevEntry.qty[t];
     if (pq != null && pq !== q) trades.push({ ticker: t, name: names[t], delta: q - pq });
     if (pq == null) trades.push({ ticker: t, name: names[t], delta: q, new: true });
