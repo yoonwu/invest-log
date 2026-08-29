@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-29T03:26:37.805Z",
+  "generatedAt": "2026-08-29T23:48:50.180Z",
   "usdkrw": {
-    "price": 1375.6700439453125,
-    "date": "2026-08-28",
+    "price": 1371.5,
+    "date": "2026-08-29",
     "source": "yahoo"
   },
   "accounts": [
@@ -16,9 +16,9 @@
           "currency": "USD",
           "priceDate": "2026-08-28",
           "source": "yahoo",
-          "valueKrw": 126418778,
-          "costKrw": 94037274,
-          "plKrw": 32381504,
+          "valueKrw": 126035567,
+          "costKrw": 93752221,
+          "plKrw": 32283346,
           "plPct": 34.43
         },
         {
@@ -28,9 +28,9 @@
           "currency": "USD",
           "priceDate": "2026-08-28",
           "source": "yahoo",
-          "valueKrw": 44740739,
-          "costKrw": 44608769,
-          "plKrw": 131970,
+          "valueKrw": 44605117,
+          "costKrw": 44473547,
+          "plKrw": 131570,
           "plPct": 0.3
         },
         {
@@ -40,9 +40,9 @@
           "currency": "USD",
           "priceDate": "2026-08-28",
           "source": "yahoo",
-          "valueKrw": 2757008,
-          "costKrw": 5180446,
-          "plKrw": -2423438,
+          "valueKrw": 2748650,
+          "costKrw": 5164743,
+          "plKrw": -2416093,
           "plPct": -46.78
         },
         {
@@ -50,17 +50,17 @@
           "qty": 186,
           "price": 1,
           "currency": "USD",
-          "priceDate": "2026-08-28",
+          "priceDate": "2026-08-29",
           "source": "fixed",
-          "valueKrw": 255875,
-          "costKrw": 255875,
+          "valueKrw": 255099,
+          "costKrw": 255099,
           "plKrw": 0,
           "plPct": 0
         }
       ],
-      "totalKrw": 174172400,
-      "costKrw": 144082364,
-      "plKrw": 30090036,
+      "totalKrw": 173644433,
+      "costKrw": 143645610,
+      "plKrw": 29998823,
       "plPct": 20.88
     },
     {
@@ -129,7 +129,7 @@
           "qty": 487000,
           "price": 1,
           "currency": "KRW",
-          "priceDate": "2026-08-28",
+          "priceDate": "2026-08-29",
           "source": "fixed",
           "valueKrw": 487000,
           "costKrw": 487000,
@@ -152,20 +152,20 @@
           "currency": "USD",
           "priceDate": "2026-08-28",
           "source": "yahoo",
-          "valueKrw": 30739828,
-          "costKrw": 30472433,
-          "plKrw": 267395,
+          "valueKrw": 30646647,
+          "costKrw": 30380062,
+          "plKrw": 266585,
           "plPct": 0.88
         }
       ],
-      "totalKrw": 30739828,
-      "costKrw": 30472433,
-      "plKrw": 267395,
+      "totalKrw": 30646647,
+      "costKrw": 30380062,
+      "plKrw": 266585,
       "plPct": 0.88
     }
   ],
-  "totalKrw": 267879528,
-  "costKrw": 227623666,
-  "plKrw": 40255862,
+  "totalKrw": 267258380,
+  "costKrw": 227094541,
+  "plKrw": 40163839,
   "plPct": 17.69
 }
