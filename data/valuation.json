@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-12T00:53:25.908Z",
+  "generatedAt": "2026-10-13T02:47:30.237Z",
   "usdkrw": {
-    "price": 1335.8599853515625,
-    "date": "2026-10-12",
+    "price": 1341.3800048828125,
+    "date": "2026-10-13",
     "source": "yahoo"
   },
   "accounts": [
@@ -12,56 +12,56 @@
         {
           "ticker": "TQQQ",
           "qty": 1279,
-          "price": 81.27999877929688,
+          "price": 79.61000061035156,
           "currency": "USD",
-          "priceDate": "2026-10-09",
+          "priceDate": "2026-10-12",
           "source": "yahoo",
-          "valueKrw": 138872155,
-          "costKrw": 91315961,
-          "plKrw": 47556194,
-          "plPct": 52.08
+          "valueKrw": 136580909,
+          "costKrw": 91693295,
+          "plKrw": 44887614,
+          "plPct": 48.95
         },
         {
           "ticker": "SGOV",
           "qty": 323,
-          "price": 100.51000213623047,
+          "price": 100.5199966430664,
           "currency": "USD",
-          "priceDate": "2026-10-09",
+          "priceDate": "2026-10-12",
           "source": "yahoo",
-          "valueKrw": 43368335,
-          "costKrw": 43317850,
-          "plKrw": 50485,
-          "plPct": 0.12
+          "valueKrw": 43551871,
+          "costKrw": 43496848,
+          "plKrw": 55023,
+          "plPct": 0.13
         },
         {
           "ticker": "SOXL",
           "qty": 18,
-          "price": 139.75999450683594,
+          "price": 128.39999389648438,
           "currency": "USD",
-          "priceDate": "2026-10-09",
+          "priceDate": "2026-10-12",
           "source": "yahoo",
-          "valueKrw": 3360596,
-          "costKrw": 5030531,
-          "plKrw": -1669935,
-          "plPct": -33.2
+          "valueKrw": 3100197,
+          "costKrw": 5051318,
+          "plKrw": -1951121,
+          "plPct": -38.63
         },
         {
           "ticker": "USD_CASH",
           "qty": 186,
           "price": 1,
           "currency": "USD",
-          "priceDate": "2026-10-12",
+          "priceDate": "2026-10-13",
           "source": "fixed",
-          "valueKrw": 248470,
-          "costKrw": 248470,
+          "valueKrw": 249497,
+          "costKrw": 249497,
           "plKrw": 0,
           "plPct": 0
         }
       ],
-      "totalKrw": 185849556,
-      "costKrw": 139912812,
-      "plKrw": 45936744,
-      "plPct": 32.83
+      "totalKrw": 183482474,
+      "costKrw": 140490958,
+      "plKrw": 42991516,
+      "plPct": 30.6
     },
     {
       "name": "연금저축계좌",
@@ -70,20 +70,20 @@
           "ticker": "456600",
           "name": "TIME글로벌AI",
           "qty": 588,
-          "price": 57270,
+          "price": 54750,
           "currency": "KRW",
-          "priceDate": "2026-10-12",
+          "priceDate": "2026-10-13",
           "source": "naver",
-          "valueKrw": 33674760,
+          "valueKrw": 32193000,
           "costKrw": 25016119,
-          "plKrw": 8658641,
-          "plPct": 34.61
+          "plKrw": 7176881,
+          "plPct": 28.69
         }
       ],
-      "totalKrw": 33674760,
+      "totalKrw": 32193000,
       "costKrw": 25016119,
-      "plKrw": 8658641,
-      "plPct": 34.61
+      "plKrw": 7176881,
+      "plPct": 28.69
     },
     {
       "name": "ISA",
@@ -92,20 +92,20 @@
           "ticker": "456600",
           "name": "TIME글로벌AI",
           "qty": 432,
-          "price": 57270,
+          "price": 54750,
           "currency": "KRW",
-          "priceDate": "2026-10-12",
+          "priceDate": "2026-10-13",
           "source": "naver",
-          "valueKrw": 24740640,
+          "valueKrw": 23652000,
           "costKrw": 19093800,
-          "plKrw": 5646840,
-          "plPct": 29.57
+          "plKrw": 4558200,
+          "plPct": 23.87
         }
       ],
-      "totalKrw": 24740640,
+      "totalKrw": 23652000,
       "costKrw": 19093800,
-      "plKrw": 5646840,
-      "plPct": 29.57
+      "plKrw": 4558200,
+      "plPct": 23.87
     },
     {
       "name": "Fomo",
@@ -114,14 +114,14 @@
           "ticker": "0195S0",
           "name": "TIGER SK하이닉스단일종목레버리지",
           "qty": 530,
-          "price": 7545,
+          "price": 5955,
           "currency": "KRW",
-          "priceDate": "2026-10-12",
+          "priceDate": "2026-10-13",
           "source": "naver",
-          "valueKrw": 3998850,
+          "valueKrw": 3156150,
           "costKrw": 8471950,
-          "plKrw": -4473100,
-          "plPct": -52.8
+          "plKrw": -5315800,
+          "plPct": -62.75
         },
         {
           "ticker": "KRW_CASH",
@@ -129,7 +129,7 @@
           "qty": 487000,
           "price": 1,
           "currency": "KRW",
-          "priceDate": "2026-10-12",
+          "priceDate": "2026-10-13",
           "source": "fixed",
           "valueKrw": 487000,
           "costKrw": 487000,
@@ -137,10 +137,10 @@
           "plPct": 0
         }
       ],
-      "totalKrw": 4485850,
+      "totalKrw": 3643150,
       "costKrw": 8958950,
-      "plKrw": -4473100,
-      "plPct": -49.93
+      "plKrw": -5315800,
+      "plPct": -59.34
     },
     {
       "name": "토스 볼스위칭",
@@ -148,24 +148,24 @@
         {
           "ticker": "TQQQ",
           "qty": 311,
-          "price": 81.27999877929688,
+          "price": 79.61000061035156,
           "currency": "USD",
-          "priceDate": "2026-10-09",
+          "priceDate": "2026-10-12",
           "source": "yahoo",
-          "valueKrw": 33767975,
-          "costKrw": 29590601,
-          "plKrw": 4177374,
-          "plPct": 14.12
+          "valueKrw": 33210839,
+          "costKrw": 29712875,
+          "plKrw": 3497964,
+          "plPct": 11.77
         }
       ],
-      "totalKrw": 33767975,
-      "costKrw": 29590601,
-      "plKrw": 4177374,
-      "plPct": 14.12
+      "totalKrw": 33210839,
+      "costKrw": 29712875,
+      "plKrw": 3497964,
+      "plPct": 11.77
     }
   ],
-  "totalKrw": 282518781,
-  "costKrw": 222572282,
-  "plKrw": 59946499,
-  "plPct": 26.93
+  "totalKrw": 276181463,
+  "costKrw": 223272702,
+  "plKrw": 52908761,
+  "plPct": 23.7
 }
