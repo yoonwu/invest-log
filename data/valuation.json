@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T01:29:17.981Z",
+  "generatedAt": "2026-11-08T00:59:30.374Z",
   "usdkrw": {
     "price": 1356.3399658203125,
     "date": "2026-11-06",
@@ -12,38 +12,38 @@
         {
           "ticker": "TQQQ",
           "qty": 1279,
-          "price": 50.470001220703125,
+          "price": 52.25,
           "currency": "USD",
-          "priceDate": "2026-11-05",
+          "priceDate": "2026-11-06",
           "source": "yahoo",
-          "valueKrw": 87553280,
+          "valueKrw": 90641148,
           "costKrw": 92715920,
-          "plKrw": -5162640,
-          "plPct": -5.57
+          "plKrw": -2074772,
+          "plPct": -2.24
         },
         {
           "ticker": "SGOV",
           "qty": 323,
-          "price": 100.44999694824219,
+          "price": 100.48999786376953,
           "currency": "USD",
-          "priceDate": "2026-11-05",
+          "priceDate": "2026-11-06",
           "source": "yahoo",
-          "valueKrw": 44006924,
+          "valueKrw": 44024448,
           "costKrw": 43981953,
-          "plKrw": 24971,
-          "plPct": 0.06
+          "plKrw": 42495,
+          "plPct": 0.1
         },
         {
           "ticker": "SOXL",
           "qty": 18,
-          "price": 40.869998931884766,
+          "price": 45.970001220703125,
           "currency": "USD",
-          "priceDate": "2026-11-05",
+          "priceDate": "2026-11-06",
           "source": "yahoo",
-          "valueKrw": 997805,
+          "valueKrw": 1122317,
           "costKrw": 5107654,
-          "plKrw": -4109849,
-          "plPct": -80.46
+          "plKrw": -3985337,
+          "plPct": -78.03
         },
         {
           "ticker": "USD_CASH",
@@ -58,10 +58,10 @@
           "plPct": 0
         }
       ],
-      "totalKrw": 132810288,
+      "totalKrw": 136040192,
       "costKrw": 142057806,
-      "plKrw": -9247518,
-      "plPct": -6.51
+      "plKrw": -6017614,
+      "plPct": -4.24
     },
     {
       "name": "연금저축계좌",
@@ -148,24 +148,24 @@
         {
           "ticker": "TQQQ",
           "qty": 311,
-          "price": 50.470001220703125,
+          "price": 52.25,
           "currency": "USD",
-          "priceDate": "2026-11-05",
+          "priceDate": "2026-11-06",
           "source": "yahoo",
-          "valueKrw": 21289343,
+          "valueKrw": 22040185,
           "costKrw": 30044253,
-          "plKrw": -8754910,
-          "plPct": -29.14
+          "plKrw": -8004068,
+          "plPct": -26.64
         }
       ],
-      "totalKrw": 21289343,
+      "totalKrw": 22040185,
       "costKrw": 30044253,
-      "plKrw": -8754910,
-      "plPct": -29.14
+      "plKrw": -8004068,
+      "plPct": -26.64
     }
   ],
-  "totalKrw": 201816381,
+  "totalKrw": 205797127,
   "costKrw": 225170928,
-  "plKrw": -23354547,
-  "plPct": -10.37
+  "plKrw": -19373801,
+  "plPct": -8.6
 }
